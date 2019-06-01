@@ -112,11 +112,6 @@
                                             </div>
                                             <div class="tab-pane" id="tools4">
                                                 @if(Agent::is('iPhone') || Agent::is('iPad'))
-                                                    @if(Agent::is('Safari'))
-                                                        <ul class=" list-paddingleft-2"><li> <a href="{{$ipa_list}}" target="_blank">点击此处在线安装</a></li></ul>
-                                                    @else
-                                                        <ul class=" list-paddingleft-2"><li> <a href="javascript:onlineInstallWarning();">点击此处在线安装</a></li></ul>
-                                                    @endif
                                                     @if($tutorial4)
                                                         {!!$tutorial4->content!!}
                                                     @else
