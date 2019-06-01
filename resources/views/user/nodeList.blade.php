@@ -81,6 +81,9 @@
                                             <li>
                                                 <a href="#tools6" data-toggle="tab"> <i class="fa fa-gamepad"></i> Games </a>
                                             </li>
+                                            <li>
+                                                <a href="#tools7" data-toggle="tab"> <i class="fa fa-vimeo"></i> V2ray </a>
+                                            </li>
                                         </ul>
                                         <div class="tab-content" style="font-size:16px;">
                                             <div class="tab-pane active" id="tools1">
@@ -135,6 +138,15 @@
                                             <div class="tab-pane" id="tools6">
                                                 @if($tutorial6)
                                                     {!!$tutorial6->content!!}
+                                                @else
+                                                    <div style="text-align: center;">
+                                                        <h3>暂无教程</h3>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="tab-pane" id="tools7">
+                                                @if($tutorial7)
+                                                    {!!$tutorial7->content!!}
                                                 @else
                                                     <div style="text-align: center;">
                                                         <h3>暂无教程</h3>

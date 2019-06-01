@@ -258,6 +258,7 @@ class UserController extends Controller
         $view['tutorial4'] = Article::type(4)->where('sort', 4)->orderBy('id', 'desc')->first();
         $view['tutorial5'] = Article::type(4)->where('sort', 5)->orderBy('id', 'desc')->first();
         $view['tutorial6'] = Article::type(4)->where('sort', 6)->orderBy('id', 'desc')->first();
+        $view['tutorial7'] = Article::type(4)->where('sort', 7)->orderBy('id', 'desc')->first();
 
         return Response::view('user.nodeList', $view);
     }
