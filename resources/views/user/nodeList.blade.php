@@ -82,7 +82,7 @@
                                                 <a href="#tools6" data-toggle="tab"> <i class="fa fa-gamepad"></i> Games </a>
                                             </li>
                                             <li>
-                                                <a href="#tools7" data-toggle="tab"> <i class="fa fa-vimeo"></i> V2ray </a>
+                                                <a href="#tools7" data-toggle="tab"> <i class="fa fa-vimeo"></i> V2Ray </a>
                                             </li>
                                         </ul>
                                         <div class="tab-content" style="font-size:16px;">
