@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Components\Helpers;
+use App\Components\ServerChan;
 use App\Http\Controllers\Controller;
+use App\Http\Models\Coupon;
 use App\Http\Models\Goods;
 use App\Http\Models\GoodsLabel;
 use App\Http\Models\Order;
@@ -284,6 +286,35 @@ class F2fpayController extends Controller
                 $logId = Helpers::addEmailLog($order->email, $title, json_encode($content));
                 Mail::to($order->email)->send(new sendUserInfo($logId, $content));
             }
+
+            // ServerChan推送
+            $user = User::query()->where('id', $order->user_id)->first();
+            $coupon = Coupon::query()->where('id', $order->coupon_id)->first();
+            if(empty($coupon)) {
+                $couponResult = '';
+            } else {
+                $couponResult = $coupon->name . ':' . $coupon->sn;
+            }
+            switch ($order->pay_way) {
+                case 1:
+                    $pay_way = '余额支付';
+                    break;
+                case 2:
+                    $pay_way = '有赞云支付';
+                    break;
+                case 3:
+                    $pay_way = 'TrimePay';
+                    break;
+                case 4:
+                    $pay_way = '支付宝国际';
+                    break;
+                case 5:
+                    $pay_way = '支付宝当面付';
+                    break;
+                default:
+                    $pay_way = '未知支付';
+            }
+            ServerChan::send('订单支付完成', '|　参数　|　内容　|' . "\r\n" . '|:-:|:-:|' . "\r\n" . '|　用户名　|　' . $user->username . '　|' . "\r\n" . '|　订单编号　|　' . $order->order_sn . '　|' . "\r\n" . '|　商品　|　' . $goods->name . '　|' . "\r\n" . '|　优惠券　|　' . $couponResult . '　|' . "\r\n" . '|　终价　|　￥' . $order->amount . '　|' . "\r\n" . '|　支付方式　|　' . $pay_way . '　|');
 
             DB::commit();
         } catch (\Exception $e) {
