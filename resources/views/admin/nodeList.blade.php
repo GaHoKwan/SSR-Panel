@@ -5,6 +5,7 @@
 @endsection
 @section('content')
     <!-- BEGIN CONTENT BODY -->
+    <meta name="viewport" content="width=1440px, initial-scale=1, user-scalable=1"/>
     <div class="page-content" style="padding-top:0;">
         <!-- BEGIN PAGE BASE CONTENT -->
         <div class="row">

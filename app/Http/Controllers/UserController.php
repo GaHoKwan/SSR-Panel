@@ -127,8 +127,6 @@ class UserController extends Controller
     // 节点列表
     public function nodeList(Request $request)
     {
-        // 在线安装APP
-        $view['ipa_list'] = 'itms-services://?action=download-manifest&url=' . self::$systemConfig['website_url'] . '/clients/ipa.plist';
 
         // 订阅连接
         $view['link'] = (self::$systemConfig['subscribe_domain'] ? self::$systemConfig['subscribe_domain'] : self::$systemConfig['website_url']) . '/s/' . Auth::user()->subscribe->code;
@@ -258,7 +256,6 @@ class UserController extends Controller
         $view['tutorial4'] = Article::type(4)->where('sort', 4)->orderBy('id', 'desc')->first();
         $view['tutorial5'] = Article::type(4)->where('sort', 5)->orderBy('id', 'desc')->first();
         $view['tutorial6'] = Article::type(4)->where('sort', 6)->orderBy('id', 'desc')->first();
-        $view['tutorial7'] = Article::type(4)->where('sort', 7)->orderBy('id', 'desc')->first();
 
         return Response::view('user.nodeList', $view);
     }

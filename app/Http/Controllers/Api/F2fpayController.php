@@ -291,7 +291,7 @@ class F2fpayController extends Controller
             $user = User::query()->where('id', $order->user_id)->first();
             $coupon = Coupon::query()->where('id', $order->coupon_id)->first();
             if(empty($coupon)) {
-                $couponResult = '';
+                $couponResult = '无';
             } else {
                 $couponResult = $coupon->name . ':' . $coupon->sn;
             }
@@ -312,7 +312,7 @@ class F2fpayController extends Controller
                     $pay_way = '支付宝当面付';
                     break;
                 default:
-                    $pay_way = '未知支付';
+                    $pay_way = '未知';
             }
             ServerChan::send('订单支付完成', '|　参数　|　内容　|' . "\r\n" . '|:-:|:-:|' . "\r\n" . '|　用户名　|　' . $user->username . '　|' . "\r\n" . '|　订单编号　|　' . $order->order_sn . '　|' . "\r\n" . '|　商品　|　' . $goods->name . '　|' . "\r\n" . '|　优惠券　|　' . $couponResult . '　|' . "\r\n" . '|　终价　|　￥' . $order->amount . '　|' . "\r\n" . '|　支付方式　|　' . $pay_way . '　|');
 

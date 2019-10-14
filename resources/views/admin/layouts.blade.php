@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <title>{{\App\Components\Helpers::systemConfig()['website_name']}}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0"/>
     <meta content="" name="description" />
     <meta content="" name="author" />
     <!-- BEGIN GLOBAL MANDATORY STYLES -->

@@ -81,9 +81,6 @@
                                             <li>
                                                 <a href="#tools6" data-toggle="tab"> <i class="fa fa-gamepad"></i> Games </a>
                                             </li>
-                                            <li>
-                                                <a href="#tools7" data-toggle="tab"> <i class="fa fa-vimeo"></i> V2Ray </a>
-                                            </li>
                                         </ul>
                                         <div class="tab-content" style="font-size:16px;">
                                             <div class="tab-pane active" id="tools1">
@@ -138,15 +135,6 @@
                                             <div class="tab-pane" id="tools6">
                                                 @if($tutorial6)
                                                     {!!$tutorial6->content!!}
-                                                @else
-                                                    <div style="text-align: center;">
-                                                        <h3>暂无教程</h3>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="tab-pane" id="tools7">
-                                                @if($tutorial7)
-                                                    {!!$tutorial7->content!!}
                                                 @else
                                                     <div style="text-align: center;">
                                                         <h3>暂无教程</h3>
@@ -343,13 +331,6 @@
     <script src="/assets/pages/scripts/components-clipboard.min.js" type="text/javascript"></script>
     <script src="/assets/global/plugins/jquery-qrcode/jquery.qrcode.min.js" type="text/javascript"></script>
     <script src="/assets/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-
-    <script type="text/javascript">
-        // 在线安装警告提示
-        function onlineInstallWarning() {
-            layer.msg('仅限在Safari浏览器下有效', {time:1000});
-        }
-    </script>
 
     <script type="text/javascript">
         var UIModals = function () {
