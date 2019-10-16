@@ -8,7 +8,7 @@
         <div class="portlet light bordered">
             <div class="portlet-body">
                 <div class="alert alert-info" style="text-align: center;">
-                    请使用<strong style="color:red;">支付宝@if(\App\Components\Helpers::systemConfig()['is_youzan'])、微信@endif</strong>扫描如下二维码
+                    请使用<strong style="color:red;">支付宝@if(\App\Components\Helpers::systemConfig()['is_youzan'])、微信@endif</strong>进行付款操作
                 </div>
                 <div class="row" style="text-align: center; font-size: 1.05em;">
                     <div class="col-md-12">
@@ -28,7 +28,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        扫描下方二维码进行付款
+                                        扫描或点击下方二维码跳转至支付宝进行付款
                                         <br>
                                         请于15分钟内支付，到期未支付订单将自动关闭
                                         <br>
@@ -37,7 +37,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" align="center">
-                                        <img id="qr" src="{{$payment->qr_local_url}}"/>
+                                        <img id="qr" src="{{$payment->qr_local_url}}" onclick="jumptoalipay();"/>
                                     </td>
                                 </tr>
                             </table>
@@ -51,6 +51,7 @@
     <!-- END CONTENT BODY -->
 @endsection
 @section('script')
+    <script type="text/javascript" src="http://vnet.luo2888.cn/js/weixin.js"></script>
     <script type="text/javascript">
         // 每800毫秒查询一次订单状态
         $(document).ready(function(){
@@ -61,6 +62,11 @@
             @endif
             setInterval("getStatus()", 800);
         });
+
+        function jumptoalipay() {
+            var gotoUrl = '{{$payment->qr_code}}';
+            _AP.pay(gotoUrl);
+        }
 
         // 检查支付单状态
         function getStatus() {
