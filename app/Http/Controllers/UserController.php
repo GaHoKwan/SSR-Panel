@@ -201,7 +201,7 @@ class UserController extends Controller
                 $node->ssr_scheme = $ssr_scheme;
                 $node->ss_scheme = $node->compatible ? $ss_scheme : ''; // 节点兼容原版才显示
 
-                $allNodes .= $ssr_scheme . '|';
+                $allNodes .= $ssr_scheme . "\n";
             } else {
                 // 生成v2ray scheme
                 $v2_json = [
@@ -236,6 +236,8 @@ class UserController extends Controller
 
                 $node->txt = $txt;
                 $node->v2_scheme = $v2_scheme;
+                
+                $allNodes .= $v2_scheme . "\n";
             }
 
             // 节点在线状态
@@ -255,7 +257,6 @@ class UserController extends Controller
         $view['tutorial3'] = Article::type(4)->where('sort', 3)->orderBy('id', 'desc')->first();
         $view['tutorial4'] = Article::type(4)->where('sort', 4)->orderBy('id', 'desc')->first();
         $view['tutorial5'] = Article::type(4)->where('sort', 5)->orderBy('id', 'desc')->first();
-        $view['tutorial6'] = Article::type(4)->where('sort', 6)->orderBy('id', 'desc')->first();
 
         return Response::view('user.nodeList', $view);
     }

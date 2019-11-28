@@ -64,22 +64,19 @@
                                     <div class="tabbable-line">
                                         <ul class="nav nav-tabs ">
                                             <li class="active">
-                                                <a href="#tools1" data-toggle="tab"> <i class="fa fa-apple"></i> Mac </a>
+                                                <a href="#tools1" data-toggle="tab"> <i class="fa fa-android fa-lg"></i> Android Device </a>
                                             </li>
                                             <li>
-                                                <a href="#tools2" data-toggle="tab"> <i class="fa fa-windows"></i> Windows </a>
+                                                <a href="#tools2" data-toggle="tab"> <i class="fa fa-apple fa-lg"></i> macOS </a>
                                             </li>
                                             <li>
-                                                <a href="#tools3" data-toggle="tab"> <i class="fa fa-linux"></i> Linux </a>
+                                                <a href="#tools3" data-toggle="tab"> <i class="fa fa-th-large fa-lg"></i> Windows </a>
                                             </li>
                                             <li>
-                                                <a href="#tools4" data-toggle="tab"> <i class="fa fa-apple"></i> iOS </a>
+                                                <a href="#tools4" data-toggle="tab"> <i class="fa fa-tablet fa-lg"></i> iPhone/iPad </a>
                                             </li>
                                             <li>
-                                                <a href="#tools5" data-toggle="tab"> <i class="fa fa-android"></i> Android </a>
-                                            </li>
-                                            <li>
-                                                <a href="#tools6" data-toggle="tab"> <i class="fa fa-gamepad"></i> Games </a>
+                                                <a href="#tools5" data-toggle="tab"> <i class="fa fa-cubes fa-lg"></i> Others </a>
                                             </li>
                                         </ul>
                                         <div class="tab-content" style="font-size:16px;">
@@ -126,15 +123,6 @@
                                             <div class="tab-pane" id="tools5">
                                                 @if($tutorial5)
                                                     {!!$tutorial5->content!!}
-                                                @else
-                                                    <div style="text-align: center;">
-                                                        <h3>暂无教程</h3>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="tab-pane" id="tools6">
-                                                @if($tutorial6)
-                                                    {!!$tutorial6->content!!}
                                                 @else
                                                     <div style="text-align: center;">
                                                         <h3>暂无教程</h3>
@@ -278,11 +266,13 @@
                                 @if($node->type == 1)
                                     @if($node->compatible)
                                         <div class="col-md-6">
-                                            <div id="qrcode_ssr_img_{{$node->id}}" style="text-align: center;"></div>
+                                            <div id="qrcode_ssr_img_{{$node->id}}" style="color: black;text-shadow: 0px 1px 0px #838383, 0px 2px 0px #AAAAAA, 0px 3px 0px #D2D2D2;font-size: 18px;text-align: center;">SSR</div>
+                                            </br>
                                             <div style="text-align: center;"><a id="download_qrcode_ssr_img_{{$node->id}}">{{trans('home.download')}}</a></div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div id="qrcode_ss_img_{{$node->id}}" style="text-align: center;"></div>
+                                            <div id="qrcode_ss_img_{{$node->id}}" style="color: black;text-shadow: 0px 1px 0px #838383, 0px 2px 0px #AAAAAA, 0px 3px 0px #D2D2D2;font-size: 18px;text-align: center;">SS</div>
+                                            </br>
                                             <div style="text-align: center;"><a id="download_qrcode_ss_img_{{$node->id}}">{{trans('home.download')}}</a></div>
                                         </div>
                                     @else
