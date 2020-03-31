@@ -662,7 +662,7 @@
             var is_nat = parseInt($(this).val());
 
             if (is_nat === 1) {
-                $("#ip").val("1.1.1.1").attr("readonly", "readonly");
+                $("#ip").val("8.8.8.8").attr("readonly", "readonly");
                 $("#server").attr("required", "required");
             } else {
                 $("#ip").val("").removeAttr("readonly");

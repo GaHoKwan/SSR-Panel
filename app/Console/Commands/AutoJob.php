@@ -268,13 +268,13 @@ class AutoJob extends Command
                 }
             }
 
-            ## 过期一个月的账户自动释放端口
+            ## 过期账户自动释放端口
             $userList = User::query()->where('enable', 0)->get();
             if (!$userList->isEmpty()) {
                 foreach ($userList as $user) {
                     if ($user->port) {
                         $overdueDays = floor((strtotime(date('Y-m-d H:i:s')) - strtotime($user->expire_time)) / 86400);
-                        if ($overdueDays > 30) {
+                        if ($overdueDays > 7) {
                             User::query()->where('id', $user->id)->update(['port' => 0]);
                         }
                     }

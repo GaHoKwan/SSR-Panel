@@ -172,8 +172,14 @@
                                                     <div class="mt-comment-info">
                                                         <span class="mt-comment-author">{{$node->name}}</span>
                                                         <span class="mt-comment-date">
-                                                                @if(!$node->online_status)
-                                                                <span class="badge badge-danger">维护中</span>
+                                                            @if(!$node->online_status)
+                                                                @if(strpos($node->name,'中转') == true)
+                                                                    <span class="badge">中转节点</span>
+                                                                @else
+                                                                    <span class="badge badge-danger">节点维护</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="badge badge-info">节点正常</span>
                                                             @endif
                                                             </span>
                                                     </div>
