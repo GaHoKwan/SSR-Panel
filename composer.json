@@ -12,18 +12,20 @@
         "ipip/db": "^1.0",
         "itbdw/ip-database": "^2.0",
         "jenssegers/agent": "^2.6",
+        "kylekatarnls/laravel-carbon-2": "^1.0.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
         "mews/captcha": "^2.2",
         "mews/purifier": "^2.1",
         "misechow/geetest": "^1.0",
         "misechow/no-captcha": "^1.0",
+        "nesbot/carbon": "2.16.3 as 1.34.0",
         "openlss/lib-array2xml": "^0.5.1",
         "overtrue/laravel-lang": "^3.0",
         "phpoffice/phpspreadsheet": "^1.6",
         "predis/predis": "^1.1",
         "rap2hpoutre/laravel-log-viewer": "^1.0",
-        "riverslei/payment": "*",
+        "riverslei/payment": "^4.1.7",
         "spatie/laravel-permission": "^2.29",
         "symfony/yaml": "^4.3"
     },
@@ -73,7 +75,7 @@
 	"repositories": {
         "packagist": {
             "type": "composer",
-            "url": "https://mirrors.cloud.tencent.com/composer"
+            "url": "https://mirrors.cloud.tencent.com/composer/"
         }
     },
     "minimum-stability": "dev",
