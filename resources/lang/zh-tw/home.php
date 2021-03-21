@@ -3,7 +3,7 @@
 return [
     'panel'                           => '控制台',
     'subscribe_address'               => '訂閱服務',
-    'copy_subscribe_address'          => '複製',
+    'open_clash'                      => '一鍵開啟Clash',
     'exchange_subscribe'              => '更換',
     'subscribe_warning'               => '注意：該訂閱地址僅限個人使用，請勿傳播該地址，這會導致您的帳號流量使用情况异常。',
     'reset_password_title'            => '重置密碼',
@@ -26,7 +26,7 @@ return [
 
     // 首页
     'ratio_tips'                      => '推薦使用支持節點訂閱功能的用戶端，通過訂閱功能可以在用戶端快速同步節點資訊。',
-    'my_node_list'                    => '節點清單',
+    'my_node_list'                    => '我的服務',
     'subscribe_button'                => '獲取訂閱地址',
     'account_info'                    => '帳號資訊',
     'account_level'                   => '等級',

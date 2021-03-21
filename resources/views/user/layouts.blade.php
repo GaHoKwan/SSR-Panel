@@ -116,7 +116,7 @@
                 <li class="nav-item {{in_array(Request::path(), ['nodeList']) || in_array(Request::segment(1), ['nodeList']) ? 'active open' : ''}}">
                     <a href="{{url('nodeList')}}" class="nav-link nav-toggle">
                         <i class="icon-list"></i>
-                        <span class="title">节点列表</span>
+                        <span class="title">{{trans('home.my_node_list')}}</span>
                     </a>
                 </li>
                 <li class="nav-item {{in_array(Request::path(), ['services']) || in_array(Request::segment(1), ['buy', 'payment']) ? 'active open' : ''}}">

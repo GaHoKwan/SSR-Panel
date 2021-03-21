@@ -51,15 +51,18 @@
                         @else
                             <div class="portlet-body">
                                 <div class="mt-clipboard-container">
-                                    <input type="text" id="mt-target-1" class="form-control" value="{{$link}}" />
-                                    <a href="#subscribe_qrcode" class="btn green" data-toggle="modal">
-                                        <i class="fa fa-qrcode"></i>
-                                    </a>
+                                    <span class="font-blue">普通订阅：</span>
+                                    <input type="text" id="mt-target-1" class="form-control" value="{{$link}}" onfocus="this.select()"/>
+                                    <span class="font-blue">Clash订阅：</span>
+                                    <input type="text" id="mt-target-2" class="form-control" value="{{$clashlink}}" onfocus="this.select()"/>
                                     <a href="javascript:exchangeSubscribe();" class="btn blue">
                                         {{trans('home.exchange_subscribe')}}
                                     </a>
-                                    <a href="javascript:;" class="btn blue mt-clipboard" data-clipboard-action="copy" data-clipboard-target="#mt-target-1">
-                                        {{trans('home.copy_subscribe_address')}}
+                                    <a href="#subscribe_qrcode" class="btn green" data-toggle="modal">
+                                        <i class="fa fa-qrcode"></i> 扫码订阅
+                                    </a>
+                                    <a href="clash://install-config?url={{$clashlink}}" class="btn green mt-clipboard">
+                                        <i class="fa fa-mixcloud"></i> {{trans('home.open_clash')}}
                                     </a>
                                     <div class="tabbable-line">
                                         <ul class="nav nav-tabs ">

@@ -3,8 +3,8 @@
 return [
     'panel'                           => '控制面板',
     'subscribe_address'               => '订阅服务',
-    'copy_subscribe_address'          => '复制',
     'exchange_subscribe'              => '更换',
+    'open_clash'                      => '一键打开Clash',
     'subscribe_warning'               => '警告：该订阅地址仅限个人使用，请勿传播该地址，否则会导致您的账号流量使用情况异常触发自动封号机制。',
     'reset_password_title'            => '重置密码',
     'username_placeholder'            => '请输入用户名',
@@ -26,7 +26,7 @@ return [
 
     // 首页
     'ratio_tips'                      => '推荐使用支持节点订阅功能的客户端，通过订阅功能可以在客户端快速同步节点信息。',
-    'my_node_list'                    => '节点列表',
+    'my_node_list'                    => '我的服务',
     'subscribe_button'                => '获取订阅地址',
     'account_info'                    => '账户信息',
     'account_level'                   => '等级',
