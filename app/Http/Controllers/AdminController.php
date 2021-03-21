@@ -15,7 +15,6 @@ use App\Http\Models\Level;
 use App\Http\Models\Order;
 use App\Http\Models\ReferralApply;
 use App\Http\Models\ReferralLog;
-use App\Http\Models\SsConfig;
 use App\Http\Models\SsGroup;
 use App\Http\Models\SsGroupNode;
 use App\Http\Models\SsNode;
@@ -113,10 +112,6 @@ class AdminController extends Controller
     {
         $id = intval($request->get('id'));
         $username = trim($request->get('username'));
-        $wechat = trim($request->get('wechat'));
-        $qq = trim($request->get('qq'));
-        $port = intval($request->get('port'));
-        $pay_way = intval($request->get('pay_way'));
         $status = $request->get('status');
         $enable = $request->get('enable');
         $online = $request->get('online');
@@ -132,22 +127,6 @@ class AdminController extends Controller
 
         if (!empty($username)) {
             $query->where('username', 'like', '%' . $username . '%');
-        }
-
-        if (!empty($wechat)) {
-            $query->where('wechat', 'like', '%' . $wechat . '%');
-        }
-
-        if (!empty($qq)) {
-            $query->where('qq', 'like', '%' . $qq . '%');
-        }
-
-        if ($port != '') {
-            $query->where('port', $port);
-        }
-
-        if ($pay_way != '') {
-            $query->where('pay_way', $pay_way);
         }
 
         if ($status != '') {
@@ -230,30 +209,14 @@ class AdminController extends Controller
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '用户名已存在，请重新输入']);
             }
 
-            if (!$request->get('usage')) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '请至少选择一种用途']);
-            }
-
             $user = new User();
             $user->username = trim($request->get('username'));
             $user->password = trim($request->get('password')) ? Hash::make(trim($request->get('password'))) : Hash::make(makeRandStr());
-            $user->port = $request->get('port');
-            $user->passwd = empty($request->get('passwd')) ? makeRandStr() : $request->get('passwd');
             $user->vmess_id = $request->get('vmess_id') ? trim($request->get('vmess_id')) : createGuid();
             $user->transfer_enable = toGB($request->get('transfer_enable', 0));
             $user->enable = intval($request->get('enable', 0));
-            $user->method = $request->get('method');
-            $user->protocol = $request->get('protocol');
-            $user->protocol_param = $request->get('protocol_param') ? $request->get('protocol_param') : '';
-            $user->obfs = $request->get('obfs');
-            $user->obfs_param = $request->get('obfs_param') ? $request->get('obfs_param') : '';
             $user->speed_limit_per_con = intval($request->get('speed_limit_per_con'));
             $user->speed_limit_per_user = intval($request->get('speed_limit_per_user'));
-            $user->gender = intval($request->get('gender'));
-            $user->wechat = $request->get('wechat') ? $request->get('wechat') : '';
-            $user->qq = $request->get('qq') ? $request->get('qq') : '';
-            $user->usage = $request->get('usage');
-            $user->pay_way = $request->get('pay_way');
             $user->balance = 0;
             $user->enable_time = empty($request->get('enable_time')) ? date('Y-m-d') : $request->get('enable_time');
             $user->expire_time = empty($request->get('expire_time')) ? date('Y-m-d', strtotime("+365 days")) : $request->get('expire_time');
@@ -285,11 +248,6 @@ class AdminController extends Controller
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '添加失败']);
             }
         } else {
-            // 生成一个可用端口
-            $view['last_port'] = self::$systemConfig['is_rand_port'] ? Helpers::getRandPort() : Helpers::getOnlyPort();
-            $view['method_list'] = Helpers::methodList();
-            $view['protocol_list'] = Helpers::protocolList();
-            $view['obfs_list'] = Helpers::obfsList();
             $view['level_list'] = Helpers::levelList();
             $view['label_list'] = Label::query()->orderBy('sort', 'desc')->orderBy('id', 'asc')->get();
             $view['initial_labels'] = explode(",", Helpers::systemConfig()['initial_labels_for_user']);
@@ -304,22 +262,11 @@ class AdminController extends Controller
         DB::beginTransaction();
         try {
             for ($i = 0; $i < 5; $i++) {
-                // 生成一个可用端口
-                $port = self::$systemConfig['is_rand_port'] ? Helpers::getRandPort() : Helpers::getOnlyPort();
-
                 $user = new User();
                 $user->username = '批量生成-' . makeRandStr();
                 $user->password = Hash::make(makeRandStr());
-                $user->port = $port;
-                $user->passwd = makeRandStr();
                 $user->vmess_id = createGuid();
                 $user->enable = 1;
-                $user->method = Helpers::getDefaultMethod();
-                $user->protocol = Helpers::getDefaultProtocol();
-                $user->protocol_param = '';
-                $user->obfs = Helpers::getDefaultObfs();
-                $user->obfs_param = '';
-                $user->usage = 1;
                 $user->transfer_enable = toGB(1024);
                 $user->enable_time = date('Y-m-d');
                 $user->expire_time = date('Y-m-d', strtotime("+365 days"));
@@ -367,23 +314,11 @@ class AdminController extends Controller
         if ($request->isMethod('POST')) {
             $username = trim($request->get('username'));
             $password = $request->get('password');
-            $port = intval($request->get('port'));
-            $passwd = $request->get('passwd');
             $vmess_id = $request->get('vmess_id') ? trim($request->get('vmess_id')) : createGuid();
             $transfer_enable = $request->get('transfer_enable');
             $enable = intval($request->get('enable'));
-            $method = $request->get('method');
-            $protocol = $request->get('protocol');
-            $protocol_param = $request->get('protocol_param');
-            $obfs = $request->get('obfs');
-            $obfs_param = $request->get('obfs_param');
             $speed_limit_per_con = intval($request->get('speed_limit_per_con'));
             $speed_limit_per_user = intval($request->get('speed_limit_per_user'));
-            $gender = intval($request->get('gender'));
-            $wechat = $request->get('wechat');
-            $qq = $request->get('qq');
-            $usage = $request->get('usage');
-            $pay_way = $request->get('pay_way');
             $status = $request->get('status');
             $labels = $request->get('labels');
             $enable_time = $request->get('enable_time');
@@ -398,19 +333,9 @@ class AdminController extends Controller
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '用户名已存在，请重新输入']);
             }
 
-            // 校验端口是否已存在
-            $exists = User::query()->where('id', '<>', $id)->where('port', '>', 0)->where('port', $port)->first();
-            if ($exists) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '端口已存在，请重新输入']);
-            }
-
             // 禁止取消默认管理员
             if ($id == 1 && $is_admin == 0) {
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '系统默认管理员不可取消']);
-            }
-
-            if (!$request->get('usage')) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '请至少选择一种用途']);
             }
 
             // 用户编辑前的信息
@@ -420,23 +345,11 @@ class AdminController extends Controller
             try {
                 $data = [
                     'username'             => $username,
-                    'port'                 => $port,
-                    'passwd'               => $passwd,
                     'vmess_id'             => $vmess_id,
                     'transfer_enable'      => toGB($transfer_enable),
                     'enable'               => $status < 0 ? 0 : $enable, // 如果禁止登陆则同时禁用代理
-                    'method'               => $method,
-                    'protocol'             => $protocol,
-                    'protocol_param'       => $protocol_param,
-                    'obfs'                 => $obfs,
-                    'obfs_param'           => $obfs_param,
                     'speed_limit_per_con'  => $speed_limit_per_con,
                     'speed_limit_per_user' => $speed_limit_per_user,
-                    'gender'               => $gender,
-                    'wechat'               => $wechat,
-                    'qq'                   => $qq,
-                    'usage'                => $usage,
-                    'pay_way'              => $pay_way,
                     'status'               => $status,
                     'enable_time'          => empty($enable_time) ? date('Y-m-d') : $enable_time,
                     'expire_time'          => empty($expire_time) ? date('Y-m-d', strtotime("+365 days")) : $expire_time,
@@ -491,9 +404,6 @@ class AdminController extends Controller
             }
 
             $view['user'] = $user;
-            $view['method_list'] = Helpers::methodList();
-            $view['protocol_list'] = Helpers::protocolList();
-            $view['obfs_list'] = Helpers::obfsList();
             $view['level_list'] = Helpers::levelList();
             $view['label_list'] = Label::query()->orderBy('sort', 'desc')->orderBy('id', 'asc')->get();
 
@@ -594,7 +504,6 @@ class AdminController extends Controller
             DB::beginTransaction();
             try {
                 $ssNode = new SsNode();
-                $ssNode->type = intval($request->get('type'));
                 $ssNode->name = $request->get('name');
                 $ssNode->group_id = $request->get('group_id') ? intval($request->get('group_id')) : 0;
                 $ssNode->country_code = $request->get('country_code') ? $request->get('country_code') : 'un';
@@ -602,28 +511,12 @@ class AdminController extends Controller
                 $ssNode->ip = $request->get('ip');
                 $ssNode->ipv6 = $request->get('ipv6');
                 $ssNode->desc = $request->get('desc') ? $request->get('desc') : '';
-                $ssNode->method = $request->get('method');
-                $ssNode->protocol = $request->get('protocol');
-                $ssNode->protocol_param = $request->get('protocol_param') ? $request->get('protocol_param') : '';
-                $ssNode->obfs = $request->get('obfs') ? $request->get('obfs') : '';
-                $ssNode->obfs_param = $request->get('obfs_param') ? $request->get('obfs_param') : '';
                 $ssNode->traffic_rate = $request->get('traffic_rate') ? $request->get('traffic_rate') : 1;
-                $ssNode->bandwidth = $request->get('bandwidth') ? $request->get('bandwidth') : 1000;
-                $ssNode->traffic = $request->get('traffic') ? $request->get('traffic') : 1000;
-                $ssNode->monitor_url = $request->get('monitor_url') ? $request->get('monitor_url') : '';
                 $ssNode->is_subscribe = intval($request->get('is_subscribe'));
                 $ssNode->is_nat = intval($request->get('is_nat'));
                 $ssNode->is_transit = intval($request->get('is_transit'));
                 $ssNode->ssh_port = $request->get('ssh_port') ? intval($request->get('ssh_port')) : 22;
                 $ssNode->is_tcp_check = intval($request->get('is_tcp_check'));
-                $ssNode->compatible = intval($request->get('type')) == 2 ? 0 : (intval($request->get('is_nat')) ? 0 : intval($request->get('compatible')));
-                $ssNode->single = intval($request->get('single'));
-                $ssNode->single_force = intval($request->get('single')) ? intval($request->get('single_force')) : 0;
-                $ssNode->single_port = intval($request->get('single')) ? ($request->get('single_port') ? $request->get('single_port') : 443) : '';
-                $ssNode->single_passwd = intval($request->get('single')) ? ($request->get('single_passwd') ? $request->get('single_passwd') : 'password') : '';
-                $ssNode->single_method = intval($request->get('single')) ? $request->get('single_method') : '';
-                $ssNode->single_protocol = intval($request->get('single')) ? $request->get('single_protocol') : '';
-                $ssNode->single_obfs = intval($request->get('single')) ? $request->get('single_obfs') : '';
                 $ssNode->sort = $request->get('sort') ? intval($request->get('sort')) : 0;
                 $ssNode->status = $request->get('status') ? intval($request->get('status')) : 1;
                 $ssNode->v2_alter_id = $request->get('v2_alter_id') ? intval($request->get('v2_alter_id')) : 16;
@@ -667,9 +560,6 @@ class AdminController extends Controller
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '添加失败：' . $e->getMessage()]);
             }
         } else {
-            $view['method_list'] = Helpers::methodList();
-            $view['protocol_list'] = Helpers::protocolList();
-            $view['obfs_list'] = Helpers::obfsList();
             $view['level_list'] = Helpers::levelList();
             $view['group_list'] = SsGroup::query()->get();
             $view['country_list'] = Country::query()->orderBy('country_code', 'asc')->get();
@@ -689,7 +579,7 @@ class AdminController extends Controller
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '编辑失败：SSH端口不合法']);
             }
 
-            if (false === filter_var($request->get('ip'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            if ($request->get('ip') && false === filter_var($request->get('ip'), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                 return Response::json(['status' => 'fail', 'data' => '', 'message' => '编辑失败：IPv4地址不合法']);
             }
 
@@ -714,7 +604,6 @@ class AdminController extends Controller
             DB::beginTransaction();
             try {
                 $data = [
-                    'type'             => intval($request->get('type')),
                     'name'             => $request->get('name'),
                     'group_id'         => $request->get('group_id') ? $request->get('group_id') : 0,
                     'country_code'     => $request->get('country_code'),
@@ -722,28 +611,12 @@ class AdminController extends Controller
                     'ip'               => $request->get('ip'),
                     'ipv6'             => $request->get('ipv6'),
                     'desc'             => $request->get('desc'),
-                    'method'           => $request->get('method'),
-                    'protocol'         => $request->get('protocol'),
-                    'protocol_param'   => $request->get('protocol_param'),
-                    'obfs'             => $request->get('obfs'),
-                    'obfs_param'       => $request->get('obfs_param'),
                     'traffic_rate'     => $request->get('traffic_rate'),
-                    'bandwidth'        => $request->get('bandwidth') ? $request->get('bandwidth') : 1000,
-                    'traffic'          => $request->get('traffic') ? $request->get('traffic') : 1000,
-                    'monitor_url'      => $request->get('monitor_url') ? $request->get('monitor_url') : '',
                     'is_subscribe'     => intval($request->get('is_subscribe')),
                     'is_nat'           => intval($request->get('is_nat')),
                     'is_transit'       => intval($request->get('is_transit')),
                     'ssh_port'         => intval($request->get('ssh_port')),
                     'is_tcp_check'     => intval($request->get('is_tcp_check')),
-                    'compatible'       => intval($request->get('type')) == 2 ? 0 : (intval($request->get('is_nat')) ? 0 : intval($request->get('compatible'))),
-                    'single'           => intval($request->get('single')),
-                    'single_force'     => intval($request->get('single')) ? intval($request->get('single_force')) : 0,
-                    'single_port'      => intval($request->get('single')) ? ($request->get('single_port') ? $request->get('single_port') : 443) : '',
-                    'single_passwd'    => intval($request->get('single')) ? ($request->get('single_passwd') ? $request->get('single_passwd') : 'password') : '',
-                    'single_method'    => intval($request->get('single')) ? $request->get('single_method') : '',
-                    'single_protocol'  => intval($request->get('single')) ? $request->get('single_protocol') : '',
-                    'single_obfs'      => intval($request->get('single')) ? $request->get('single_obfs') : '',
                     'sort'             => intval($request->get('sort')),
                     'status'           => intval($request->get('status')),
                     'v2_alter_id'      => $request->get('v2_alter_id') ? intval($request->get('v2_alter_id')) : 16,
@@ -797,9 +670,6 @@ class AdminController extends Controller
             }
 
             $view['node'] = $node;
-            $view['method_list'] = Helpers::methodList();
-            $view['protocol_list'] = Helpers::protocolList();
-            $view['obfs_list'] = Helpers::obfsList();
             $view['level_list'] = Helpers::levelList();
             $view['group_list'] = SsGroup::query()->get();
             $view['country_list'] = Country::query()->orderBy('country_code', 'asc')->get();
@@ -1110,18 +980,11 @@ class AdminController extends Controller
     // 流量日志
     public function trafficLog(Request $request)
     {
-        $port = $request->get('port');
         $user_id = $request->get('user_id');
         $username = trim($request->get('username'));
         $nodeId = intval($request->get('nodeId'));
 
         $query = UserTrafficLog::query()->with(['user', 'node']);
-
-        if ($port) {
-            $query->whereHas('user', function ($q) use ($port) {
-                $q->where('port', $port);
-            });
-        }
 
         if ($user_id) {
             $query->where('user_id', intval($user_id));
@@ -1151,354 +1014,6 @@ class AdminController extends Controller
         $view['nodeList'] = SsNode::query()->where('status', 1)->orderBy('sort', 'desc')->orderBy('id', 'desc')->get();
 
         return Response::view('admin.trafficLog', $view);
-    }
-
-    // SS(R)链接反解析
-    public function decompile(Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $content = $request->get('content');
-
-            if (empty($content)) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '请在左侧填入要反解析的SS(R)链接']);
-            }
-
-            // 反解析处理
-            $content = str_replace("\n", ",", $content);
-            $content = explode(',', $content);
-            $txt = '';
-            foreach ($content as $item) {
-                // 判断是SS还是SSR链接
-                $str = '';
-                if (false !== strpos($item, 'ssr://')) {
-                    $str = mb_substr($item, 6);
-                } elseif (false !== strpos($item, 'ss://')) {
-                    $str = mb_substr($item, 5);
-                }
-
-                $txt .= "\r\n" . base64url_decode($str);
-            }
-
-            // 生成转换好的JSON文件
-            file_put_contents(public_path('downloads/decompile.json'), $txt);
-
-            return Response::json(['status' => 'success', 'data' => $txt, 'message' => '反解析成功']);
-        } else {
-            return Response::view('admin.decompile');
-        }
-    }
-
-    // 格式转换(SS转SSR)
-    public function convert(Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            $method = $request->get('method');
-            $transfer_enable = $request->get('transfer_enable');
-            $protocol = $request->get('protocol');
-            $protocol_param = $request->get('protocol_param');
-            $obfs = $request->get('obfs');
-            $obfs_param = $request->get('obfs_param');
-            $content = $request->get('content');
-
-            if (empty($content)) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '请在左侧填入要转换的内容']);
-            }
-
-            // 校验格式
-            $content = json_decode($content);
-            if (empty($content->port_password)) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '转换失败：配置信息里缺少【port_password】字段，或者该字段为空']);
-            }
-
-            // 转换成SSR格式JSON
-            $data = [];
-            foreach ($content->port_password as $port => $passwd) {
-                $data[] = [
-                    'd'               => 0,
-                    'enable'          => 1,
-                    'method'          => $method,
-                    'obfs'            => $obfs,
-                    'obfs_param'      => empty($obfs_param) ? "" : $obfs_param,
-                    'passwd'          => $passwd,
-                    'port'            => $port,
-                    'protocol'        => $protocol,
-                    'protocol_param'  => empty($protocol_param) ? "" : $protocol_param,
-                    'transfer_enable' => toGB($transfer_enable),
-                    'u'               => 0,
-                    'user'            => date('Ymd') . '_IMPORT_' . $port,
-                ];
-            }
-
-            $json = json_encode($data);
-
-            // 生成转换好的JSON文件
-            file_put_contents(public_path('downloads/convert.json'), $json);
-
-            return Response::json(['status' => 'success', 'data' => $json, 'message' => '转换成功']);
-        } else {
-            // 加密方式、协议、混淆
-            $view['method_list'] = Helpers::methodList();
-            $view['protocol_list'] = Helpers::protocolList();
-            $view['obfs_list'] = Helpers::obfsList();
-
-            return Response::view('admin.convert', $view);
-        }
-    }
-
-    // 下载转换好的JSON文件
-    public function download(Request $request)
-    {
-        $type = $request->get('type');
-        if (empty($type)) {
-            exit('参数异常');
-        }
-
-        if ($type == '1') {
-            $filePath = public_path('downloads/convert.json');
-        } else {
-            $filePath = public_path('downloads/decompile.json');
-        }
-
-        if (!file_exists($filePath)) {
-            exit('文件不存在，请检查目录权限');
-        }
-
-        return Response::download($filePath);
-    }
-
-    // 数据导入
-    public function import(Request $request)
-    {
-        if ($request->isMethod('POST')) {
-            if (!$request->hasFile('uploadFile')) {
-                Session::flash('errorMsg', '请选择要上传的文件');
-
-                return Redirect::back();
-            }
-
-            $file = $request->file('uploadFile');
-
-            // 只能上传JSON文件
-            if ($file->getClientMimeType() != 'application/json' || $file->getClientOriginalExtension() != 'json') {
-                Session::flash('errorMsg', '只允许上传JSON文件');
-
-                return Redirect::back();
-            }
-
-            if (!$file->isValid()) {
-                Session::flash('errorMsg', '产生未知错误，请重新上传');
-
-                return Redirect::back();
-            }
-
-            $save_path = realpath(storage_path('uploads'));
-            $new_name = md5($file->getClientOriginalExtension()) . '.json';
-            $file->move($save_path, $new_name);
-
-            // 读取文件内容
-            $data = file_get_contents($save_path . '/' . $new_name);
-            $data = json_decode($data);
-            if (!$data) {
-                Session::flash('errorMsg', '内容格式解析异常，请上传符合SSR(R)配置规范的JSON文件');
-
-                return Redirect::back();
-            }
-
-            DB::beginTransaction();
-            try {
-                foreach ($data as $user) {
-                    $obj = new User();
-                    $obj->username = $user->user;
-                    $obj->password = Hash::make('123456');
-                    $obj->port = $user->port;
-                    $obj->passwd = $user->passwd;
-                    $obj->vmess_id = $user->vmess_id;
-                    $obj->transfer_enable = $user->transfer_enable;
-                    $obj->u = 0;
-                    $obj->d = 0;
-                    $obj->t = 0;
-                    $obj->enable = 1;
-                    $obj->method = $user->method;
-                    $obj->protocol = $user->protocol;
-                    $obj->protocol_param = $user->protocol_param;
-                    $obj->obfs = $user->obfs;
-                    $obj->obfs_param = $user->obfs_param;
-                    $obj->speed_limit_per_con = 204800;
-                    $obj->speed_limit_per_user = 204800;
-                    $obj->wechat = '';
-                    $obj->qq = '';
-                    $obj->usage = 1;
-                    $obj->pay_way = 3;
-                    $obj->balance = 0;
-                    $obj->enable_time = date('Y-m-d');
-                    $obj->expire_time = '2099-01-01';
-                    $obj->remark = '';
-                    $obj->is_admin = 0;
-                    $obj->reg_ip = getClientIp();
-                    $obj->created_at = date('Y-m-d H:i:s');
-                    $obj->updated_at = date('Y-m-d H:i:s');
-                    $obj->save();
-                }
-
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-
-                Session::flash('errorMsg', '出错了，可能是导入的配置中有端口已经存在了');
-
-                return Redirect::back();
-            }
-
-            Session::flash('successMsg', '导入成功');
-
-            return Redirect::back();
-        } else {
-            return Response::view('admin.import');
-        }
-    }
-
-    // 导出配置信息
-    public function export(Request $request)
-    {
-        $id = $request->get('id');
-
-        if (empty($id)) {
-            return Redirect::to('admin/userList');
-        }
-
-        $user = User::query()->where('id', $id)->first();
-        if (empty($user)) {
-            return Redirect::to('admin/userList');
-        }
-
-        $nodeList = SsNode::query()->where('status', 1)->orderBy('sort', 'desc')->orderBy('id', 'asc')->paginate(15)->appends($request->except('page'));
-        foreach ($nodeList as &$node) {
-            // 获取分组名称
-            $group = SsGroup::query()->where('id', $node->group_id)->first();
-
-            if ($node->type == 1) {
-                // 生成ssr scheme
-                $obfs_param = $user->obfs_param ? $user->obfs_param : $node->obfs_param;
-                $protocol_param = $node->single ? $user->port . ':' . $user->passwd : $user->protocol_param;
-
-                $ssr_str = ($node->server ? $node->server : $node->ip) . ':' . ($node->single ? $node->single_port : $user->port);
-                $ssr_str .= ':' . ($node->single ? $node->single_protocol : $user->protocol) . ':' . ($node->single ? $node->single_method : $user->method);
-                $ssr_str .= ':' . ($node->single ? $node->single_obfs : $user->obfs) . ':' . ($node->single ? base64url_encode($node->single_passwd) : base64url_encode($user->passwd));
-                $ssr_str .= '/?obfsparam=' . base64url_encode($obfs_param);
-                $ssr_str .= '&protoparam=' . ($node->single ? base64url_encode($user->port . ':' . $user->passwd) : base64url_encode($protocol_param));
-                $ssr_str .= '&remarks=' . base64url_encode($node->name);
-                $ssr_str .= '&group=' . base64url_encode(empty($group) ? '' : $group->name);
-                $ssr_str .= '&udpport=0';
-                $ssr_str .= '&uot=0';
-                $ssr_str = base64url_encode($ssr_str);
-                $ssr_scheme = 'ssr://' . $ssr_str;
-
-                // 生成ss scheme
-                $ss_str = $user->method . ':' . $user->passwd . '@';
-                $ss_str .= ($node->server ? $node->server : $node->ip) . ':' . $user->port;
-                $ss_str = base64url_encode($ss_str) . '#' . 'VPN';
-                $ss_scheme = 'ss://' . $ss_str;
-
-                // 生成配置信息
-                $txt = "服务器：" . ($node->server ? $node->server : $node->ip) . "\r\n";
-                if ($node->ipv6) {
-                    $txt .= "IPv6：" . $node->ipv6 . "\r\n";
-                }
-                $txt .= "远程端口：" . ($node->single ? $node->single_port : $user->port) . "\r\n";
-                $txt .= "密码：" . ($node->single ? $node->single_passwd : $user->passwd) . "\r\n";
-                $txt .= "加密方法：" . ($node->single ? $node->single_method : $user->method) . "\r\n";
-                $txt .= "路由：绕过局域网及中国大陆地址\r\n\r\n";
-                $txt .= "协议：" . ($node->single ? $node->single_protocol : $user->protocol) . "\r\n";
-                $txt .= "协议参数：" . ($node->single ? $user->port . ':' . $user->passwd : $user->protocol_param) . "\r\n";
-                $txt .= "混淆方式：" . ($node->single ? $node->single_obfs : $user->obfs) . "\r\n";
-                $txt .= "混淆参数：" . ($user->obfs_param ? $user->obfs_param : $node->obfs_param) . "\r\n";
-                $txt .= "本地端口：1080\r\n";
-
-                $node->txt = $txt;
-                $node->ssr_scheme = $ssr_scheme;
-                $node->ss_scheme = $node->compatible ? $ss_scheme : ''; // 节点兼容原版才显示
-            } else {
-                // 生成v2ray scheme
-                $v2_json = [
-                    "v"    => "2",
-                    "ps"   => $node->name,
-                    "add"  => $node->server ? $node->server : $node->ip,
-                    "port" => $node->v2_port,
-                    "id"   => $user->vmess_id,
-                    "aid"  => $node->v2_alter_id,
-                    "net"  => $node->v2_net,
-                    "type" => $node->v2_type,
-                    "host" => $node->v2_host,
-                    "path" => $node->v2_path,
-                    "tls"  => $node->v2_tls ? "tls" : ""
-                ];
-                $v2_scheme = 'vmess://' . base64url_encode(json_encode($v2_json, JSON_PRETTY_PRINT));
-
-                // 生成文本配置信息
-                $txt = "服务器：" . ($node->server ? $node->server : $node->ip) . "\r\n";
-                if ($node->ipv6) {
-                    $txt .= "IPv6：" . $node->ipv6 . "\r\n";
-                }
-                $txt .= "端口：" . $node->v2_port . "\r\n";
-                $txt .= "加密方式：" . $node->v2_method . "\r\n";
-                $txt .= "用户ID：" . $user->vmess_id . "\r\n";
-                $txt .= "额外ID：" . $node->v2_alter_id . "\r\n";
-                $txt .= "传输协议：" . $node->v2_net . "\r\n";
-                $txt .= "伪装类型：" . $node->v2_type . "\r\n";
-                $txt .= $node->v2_host ? "伪装域名：" . $node->v2_host . "\r\n" : "";
-                $txt .= $node->v2_path ? "路径：" . $node->v2_path . "\r\n" : "";
-                $txt .= $node->v2_tls == 1 ? "TLS：tls\r\n" : "";
-
-                $node->txt = $txt;
-                $node->v2_scheme = $v2_scheme;
-            }
-        }
-
-        $view['nodeList'] = $nodeList;
-        $view['user'] = $user;
-
-        return Response::view('admin.export', $view);
-    }
-
-    // 导出原版SS用户配置信息
-    public function exportSSJson(Request $request)
-    {
-        $userList = User::query()->where('port', '>', 0)->get();
-        $defaultMethod = Helpers::getDefaultMethod();
-
-        $json = '';
-        if (!$userList->isEmpty()) {
-            $tmp = [];
-            foreach ($userList as $key => $user) {
-                $tmp[] = '"' . $user->port . '":"' . $user->passwd . '"';
-            }
-
-            $userPassword = implode(",\n\t\t", $tmp);
-            $json = <<<EOF
-{
-	"server":"0.0.0.0",
-    "local_address":"127.0.0.1",
-    "local_port":1080,
-    "port_password":{
-        {$userPassword}
-    },
-    "timeout":300,
-    "method":"{$defaultMethod}",
-    "fast_open":false
-}
-EOF;
-        }
-
-        // 生成JSON文件
-        $fileName = makeRandStr('16') . '_shadowsocks.json';
-        $filePath = public_path('downloads/' . $fileName);
-        file_put_contents($filePath, $json);
-
-        if (!file_exists($filePath)) {
-            exit('文件生成失败，请检查目录权限');
-        }
-
-        return Response::download($filePath);
     }
 
     // 修改个人资料
@@ -1596,86 +1111,13 @@ EOF;
         return Response::view('admin.userMonitor', $view);
     }
 
-    // 生成端口
-    public function makePort(Request $request)
-    {
-        $new_port = self::$systemConfig['is_rand_port'] ? Helpers::getRandPort() : Helpers::getOnlyPort();
-        echo $new_port;
-        exit;
-    }
-
-    // 加密方式、混淆、协议、等级、国家地区
+    // 等级、国家地区
     public function config(Request $request)
     {
-        if ($request->isMethod('POST')) {
-            $name = $request->get('name');
-            $type = $request->get('type', 1); // 类型：1-加密方式（method）、2-协议（protocol）、3-混淆（obfs）
-            $is_default = $request->get('is_default', 0);
-            $sort = $request->get('sort', 0);
-
-            if (empty($name)) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '配置名称不能为空']);
-            }
-
-            // 校验是否已存在
-            $config = SsConfig::type($type)->where('name', $name)->first();
-            if ($config) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '配置已经存在，请勿重复添加']);
-            }
-
-            $ssConfig = new SsConfig();
-            $ssConfig->name = $name;
-            $ssConfig->type = $type;
-            $ssConfig->is_default = $is_default;
-            $ssConfig->sort = $sort;
-            $ssConfig->save();
-
-            return Response::json(['status' => 'success', 'data' => '', 'message' => '添加成功']);
-        } else {
-            $view['method_list'] = SsConfig::type(1)->get();
-            $view['protocol_list'] = SsConfig::type(2)->get();
-            $view['obfs_list'] = SsConfig::type(3)->get();
             $view['level_list'] = Helpers::levelList();
             $view['country_list'] = Country::query()->get();
 
             return Response::view('admin.config', $view);
-        }
-    }
-
-    // 删除配置
-    public function delConfig(Request $request)
-    {
-        $id = $request->get('id');
-
-        $ret = SsConfig::query()->where('id', $id)->delete();
-        if ($ret) {
-            return Response::json(['status' => 'success', 'data' => '', 'message' => '删除成功']);
-        } else {
-            return Response::json(['status' => 'fail', 'data' => '', 'message' => '删除失败']);
-        }
-    }
-
-    // 设置默认配置
-    public function setDefaultConfig(Request $request)
-    {
-        $id = $request->get('id');
-
-        if (empty($id)) {
-            return Response::json(['status' => 'fail', 'data' => '', 'message' => '非法请求']);
-        }
-
-        $config = SsConfig::query()->where('id', $id)->first();
-        if (!$config) {
-            return Response::json(['status' => 'fail', 'data' => '', 'message' => '配置不存在']);
-        }
-
-        // 去除该配置所属类型的默认值
-        SsConfig::default()->type($config->type)->update(['is_default' => 0]);
-
-        // 将该ID对应记录值置为默认值
-        SsConfig::query()->where('id', $id)->update(['is_default' => 1]);
-
-        return Response::json(['status' => 'success', 'data' => '', 'message' => '操作成功']);
     }
 
     // 设置系统扩展信息，例如客服、统计代码
@@ -1739,43 +1181,6 @@ EOF;
 
             return Redirect::back();
         }
-    }
-
-    // 日志分析
-    public function analysis(Request $request)
-    {
-        $file = storage_path('app/ssserver.log');
-        if (!file_exists($file)) {
-            Session::flash('analysisErrorMsg', $file . ' 不存在，请先创建文件');
-
-            return Response::view('admin.analysis');
-        }
-
-        $logs = $this->tail($file, 10000);
-        if (false === $logs) {
-            $view['urlList'] = [];
-        } else {
-            $url = [];
-            foreach ($logs as $log) {
-                if (strpos($log, 'TCP connecting')) {
-                    continue;
-                }
-
-                preg_match('/TCP request (\w+\.){2}\w+/', $log, $tcp_matches);
-                if (!empty($tcp_matches)) {
-                    $url[] = str_replace('TCP request ', '[TCP] ', $tcp_matches[0]);
-                } else {
-                    preg_match('/UDP data to (25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/', $log, $udp_matches);
-                    if (!empty($udp_matches)) {
-                        $url[] = str_replace('UDP data to ', '[UDP] ', $udp_matches[0]);
-                    }
-                }
-            }
-
-            $view['urlList'] = array_unique($url);
-        }
-
-        return Response::view('admin.analysis', $view);
     }
 
     // 添加等级
@@ -2026,16 +1431,8 @@ EOF;
                 'max_rand_traffic',
                 'push_bear_send_key',
                 'push_bear_qrcode',
-                'youzan_client_id',
-                'youzan_client_secret',
                 'kdt_id',
                 'is_forbid_china',
-                'alipay_partner',
-                'alipay_key',
-                'alipay_transport',
-                'alipay_sign_type',
-                'alipay_private_key',
-                'alipay_public_key',
                 'website_security_code'
             ];
 
@@ -2044,53 +1441,9 @@ EOF;
             }
         }
 
-        // 如果更改了有赞云任何一个配置，则删除有赞云的授权缓存，防止出现client_id错误
-        if (in_array($name, ['youzan_client_id', 'youzan_client_secret', 'kdt_id'])) {
-            \Cache::forget('YZY_TOKEN');
-        }
-
         // 如果是返利比例，则需要除100
         if (in_array($name, ['referral_percent'])) {
             $value = intval($value) / 100;
-        }
-
-        // 用有赞云支付则不可用支付宝国际和支付宝当面付
-        if (in_array($name, ['is_youzan'])) {
-            $is_alipay = Config::query()->where('name', 'is_alipay')->first();
-            if ($is_alipay->value) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '已经在使用【支付宝国际支付】']);
-            }
-
-            $is_f2fpay = Config::query()->where('name', 'is_f2fpay')->first();
-            if ($is_f2fpay->value) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '已经在使用【支付宝当面付】']);
-            }
-        }
-
-        // 用支付国际则不可用有赞云支付和支付宝当面付
-        if (in_array($name, ['is_alipay'])) {
-            $is_youzan = Config::query()->where('name', 'is_youzan')->first();
-            if ($is_youzan->value) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '已经在使用【有赞云支付】']);
-            }
-
-            $is_f2fpay = Config::query()->where('name', 'is_f2fpay')->first();
-            if ($is_f2fpay->value) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '已经在使用【支付宝当面付】']);
-            }
-        }
-
-        // 用支付宝当面则不可用有赞云支付和支付宝国际
-        if (in_array($name, ['is_f2fpay'])) {
-            $is_youzan = Config::query()->where('name', 'is_youzan')->first();
-            if ($is_youzan->value) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '已经在使用【有赞云支付】']);
-            }
-
-            $is_alipay = Config::query()->where('name', 'is_alipay')->first();
-            if ($is_alipay->value) {
-                return Response::json(['status' => 'fail', 'data' => '', 'message' => '已经在使用【支付宝国际支付】']);
-            }
         }
 
         // 更新配置
@@ -2402,9 +1755,6 @@ EOF;
     public function userOnlineIPList(Request $request)
     {
         $username = trim($request->get('username'));
-        $port = intval($request->get('port'));
-        $wechat = trim($request->get('wechat'));
-        $qq = trim($request->get('qq'));
 
         $query = User::query()->where('status', '>=', 0)->where('enable', 1);
 
@@ -2412,23 +1762,11 @@ EOF;
             $query->where('username', 'like', '%' . $username . '%');
         }
 
-        if (!empty($wechat)) {
-            $query->where('wechat', 'like', '%' . $wechat . '%');
-        }
-
-        if (!empty($qq)) {
-            $query->where('qq', 'like', '%' . $qq . '%');
-        }
-
-        if ($port) {
-            $query->where('port', $port);
-        }
-
         $userList = $query->paginate(15)->appends($request->except('page'));
         if (!$userList->isEmpty()) {
             foreach ($userList as &$user) {
                 // 最近5条在线IP记录，如果后端设置为60秒上报一次，则为10分钟内的在线IP
-                $user->onlineIPList = SsNodeIp::query()->with(['node'])->where('type', 'tcp')->where('port', $user->port)->where('created_at', '>=', strtotime("-10 minutes"))->orderBy('id', 'desc')->limit(5)->get();
+                $user->onlineIPList = SsNodeIp::query()->with(['node'])->where('type', 'tcp')->where('user_id', $user->id)->where('created_at', '>=', strtotime("-10 minutes"))->orderBy('id', 'desc')->limit(5)->get();
             }
         }
 
@@ -2539,7 +1877,6 @@ EOF;
     {
         $ip = trim($request->get('ip'));
         $username = trim($request->get('username'));
-        $port = intval($request->get('port'));
         $nodeId = intval($request->get('nodeId'));
         $userId = intval($request->get('id'));
 
@@ -2555,12 +1892,6 @@ EOF;
             });
         }
 
-        if ($port) {
-            $query->whereHas('user', function ($q) use ($port) {
-                $q->where('port', $port);
-            });
-        }
-
         if ($nodeId) {
             $query->whereHas('node', function ($q) use ($nodeId) {
                 $q->where('id', $nodeId);
@@ -2573,7 +1904,7 @@ EOF;
             });
         }
 
-        $list = $query->groupBy('port')->orderBy('id', 'desc')->paginate(20)->appends($request->except('page'));
+        $list = $query->orderBy('id', 'desc')->paginate(20)->appends($request->except('page'));
 
         foreach ($list as $vo) {
             // 跳过上报多IP的

@@ -33,12 +33,6 @@
                                         <li class="active">
                                             <a href="#tab_1" data-toggle="tab">{{trans('home.password')}}</a>
                                         </li>
-                                        <li>
-                                            <a href="#tab_2" data-toggle="tab">{{trans('home.contact')}}</a>
-                                        </li>
-                                        <li>
-                                            <a href="#tab_3" data-toggle="tab">{{trans('home.ssr_setting')}}</a>
-                                        </li>
                                     </ul>
                                 </div>
                                 <div class="portlet-body">
@@ -58,42 +52,6 @@
                                                     <div class="row">
                                                         <div class=" col-md-4">
                                                             <button type="submit" class="btn green">{{trans('home.submit')}}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="tab-pane" id="tab_2">
-                                            <form action="{{url('profile')}}" method="post" enctype="multipart/form-data" class="form-bordered">
-                                                <div class="form-group">
-                                                    <label class="control-label">{{trans('home.wechat')}}</label>
-                                                    <input type="text" class="form-control" name="wechat" value="{{Auth::user()->wechat}}" id="wechat" required />
-                                                    <input type="hidden" name="_token" value="{{csrf_token()}}" />
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="control-label"> QQ </label>
-                                                    <input type="text" class="form-control" name="qq" value="{{Auth::user()->qq}}" id="qq" required />
-                                                </div>
-                                                <div class="form-actions">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <button type="submit" class="btn green">{{trans('home.submit')}}</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="tab-pane" id="tab_3">
-                                            <form action="{{url('profile')}}" method="post" enctype="multipart/form-data" class="form-bordered">
-                                                <div class="form-group">
-                                                    <label class="control-label"> {{trans('home.connection_password')}} </label>
-                                                    <input type="text" class="form-control" name="passwd" value="{{Auth::user()->passwd}}" id="passwd" required />
-                                                    <input type="hidden" name="_token" value="{{csrf_token()}}" />
-                                                </div>
-                                                <div class="form-actions">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <button type="submit" class="btn green"> {{trans('home.submit')}} </button>
                                                         </div>
                                                     </div>
                                                 </div>

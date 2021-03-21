@@ -169,7 +169,7 @@ return [
     'referral_table_date'             => '返利时间',
     'referral_table_none'             => '暂无数据',
     'referral_table_apply'            => '提现',
-    'referral_summary'                => '合计返利 :amount 元（ :total 次），满 :money 元可以申请提现。',
+    'referral_summary'                => '合计返利 :amount 元（ :total 次），满 :money 元可以申请提现。申请提现后请联系客服，否则会驳回。',
     'referral_apply_title'            => '提现记录',
     'referral_apply_table_amount'     => '提现金额',
     'referral_apply_table_status'     => '状态',

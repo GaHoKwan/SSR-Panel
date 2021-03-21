@@ -1,17 +1,5 @@
-# SSRPanel
-Support but not limited to: Shadowsocks,ShadowsocksR,ShadowsocksRR,V2Ray
-
-- [Demo](https://demo.ssrpanel.com)
-- [Telegram](https://t.me/ssrpanel)
-- [Issues](https://github.com/ssrpanel/SSRPanel/issues)
-- [WIKI](https://github.com/ssrpanel/SSRPanel/wiki)
-
-## Donate
-**ETH** : 0x968f797f194fcec05ea571723199748b58de38ba
-
-![Chat in Telegram](https://i.loli.net/2019/01/10/5c37189a75edd.png)
-
-[VPS Recommend](https://github.com/ssrpanel/SSRPanel/wiki/VPS%E6%8E%A8%E8%8D%90&%E8%B4%AD%E4%B9%B0%E7%BB%8F%E9%AA%8C)
+# VNet Panel
+Support but not limited to: V2Ray
 
 ## Requirements
 - PHP 7.1.3 +
@@ -42,4 +30,4 @@ Support but not limited to: Shadowsocks,ShadowsocksR,ShadowsocksRR,V2Ray
 
 ## License
 
-SSRPanel is open-sourced software licensed under the MIT license.
+VNet Panel is open-sourced software licensed under the MIT license.

@@ -24,6 +24,7 @@ use App\Http\Models\UserTrafficDaily;
 use App\Http\Models\UserTrafficHourly;
 use App\Mail\newTicket;
 use App\Mail\replyTicket;
+use App\Mail\paymentSuccess;
 use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -160,86 +161,42 @@ class UserController extends Controller
             // 获取分组名称
             $group = SsGroup::query()->where('id', $node->group_id)->first();
 
-            if ($node->type == 1) {
-                // 生成ssr scheme
-                $obfs_param = Auth::user()->obfs_param ? Auth::user()->obfs_param : $node->obfs_param;
-                $protocol_param = $node->single ? Auth::user()->port . ':' . Auth::user()->passwd : Auth::user()->protocol_param;
+            // 生成v2ray scheme
+            $v2_json = [
+                "v"    => "2",
+                "ps"   => $node->name,
+                "add"  => $node->server ? $node->server : $node->ip,
+                "port" => $node->v2_port,
+                "id"   => Auth::user()->vmess_id,
+                "aid"  => $node->v2_alter_id,
+                "net"  => $node->v2_net,
+                "type" => $node->v2_type,
+                "host" => $node->v2_host,
+                "path" => $node->v2_path,
+                "tls"  => $node->v2_tls == 1 ? "tls" : "",
+                "allowInsecure" => true
+            ];
+            $v2_scheme = 'vmess://' . base64url_encode(json_encode($v2_json, JSON_PRETTY_PRINT));
 
-                $ssr_str = ($node->server ? $node->server : $node->ip) . ':' . ($node->single ? $node->single_port : Auth::user()->port);
-                $ssr_str .= ':' . ($node->single ? $node->single_protocol : Auth::user()->protocol) . ':' . ($node->single ? $node->single_method : Auth::user()->method);
-                $ssr_str .= ':' . ($node->single ? $node->single_obfs : Auth::user()->obfs) . ':' . ($node->single ? base64url_encode($node->single_passwd) : base64url_encode(Auth::user()->passwd));
-                $ssr_str .= '/?obfsparam=' . base64url_encode($obfs_param);
-                $ssr_str .= '&protoparam=' . ($node->single ? base64url_encode(Auth::user()->port . ':' . Auth::user()->passwd) : base64url_encode($protocol_param));
-                $ssr_str .= '&remarks=' . base64url_encode($node->name);
-                $ssr_str .= '&group=' . base64url_encode(empty($group) ? '' : $group->name);
-                $ssr_str .= '&udpport=0';
-                $ssr_str .= '&uot=0';
-                $ssr_str = base64url_encode($ssr_str);
-                $ssr_scheme = 'ssr://' . $ssr_str;
-
-                // 生成ss scheme
-                $ss_str = Auth::user()->method . ':' . Auth::user()->passwd . '@';
-                $ss_str .= ($node->server ? $node->server : $node->ip) . ':' . Auth::user()->port;
-                $ss_str = base64url_encode($ss_str) . '#' . 'VPN';
-                $ss_scheme = 'ss://' . $ss_str;
-
-                // 生成文本配置信息
-                $txt = "服务器：" . ($node->server ? $node->server : $node->ip) . PHP_EOL;
-                if ($node->ipv6) {
-                    $txt .= "IPv6：" . $node->ipv6 . PHP_EOL;
-                }
-                $txt .= "远程端口：" . ($node->single ? $node->single_port : Auth::user()->port) . PHP_EOL;
-                $txt .= "密码：" . ($node->single ? $node->single_passwd : Auth::user()->passwd) . PHP_EOL;
-                $txt .= "加密方法：" . ($node->single ? $node->single_method : Auth::user()->method) . PHP_EOL;
-                $txt .= "路由：绕过局域网及中国大陆地址" . PHP_EOL . PHP_EOL;
-                $txt .= "协议：" . ($node->single ? $node->single_protocol : Auth::user()->protocol) . PHP_EOL;
-                $txt .= "协议参数：" . ($node->single ? Auth::user()->port . ':' . Auth::user()->passwd : Auth::user()->protocol_param) . PHP_EOL;
-                $txt .= "混淆方式：" . ($node->single ? $node->single_obfs : Auth::user()->obfs) . PHP_EOL;
-                $txt .= "混淆参数：" . (Auth::user()->obfs_param ? Auth::user()->obfs_param : $node->obfs_param) . PHP_EOL;
-                $txt .= "本地端口：1080" . PHP_EOL;
-
-                $node->txt = $txt;
-                $node->ssr_scheme = $ssr_scheme;
-                $node->ss_scheme = $node->compatible ? $ss_scheme : ''; // 节点兼容原版才显示
-
-                $allNodes .= $ssr_scheme . "\n";
-            } else {
-                // 生成v2ray scheme
-                $v2_json = [
-                    "v"    => "2",
-                    "ps"   => $node->name,
-                    "add"  => $node->server ? $node->server : $node->ip,
-                    "port" => $node->v2_port,
-                    "id"   => Auth::user()->vmess_id,
-                    "aid"  => $node->v2_alter_id,
-                    "net"  => $node->v2_net,
-                    "type" => $node->v2_type,
-                    "host" => $node->v2_host,
-                    "path" => $node->v2_path,
-                    "tls"  => $node->v2_tls == 1 ? "tls" : ""
-                ];
-                $v2_scheme = 'vmess://' . base64url_encode(json_encode($v2_json, JSON_PRETTY_PRINT));
-
-                // 生成文本配置信息
-                $txt = "服务器：" . ($node->server ? $node->server : $node->ip) . PHP_EOL;
-                if ($node->ipv6) {
-                    $txt .= "IPv6：" . $node->ipv6 . PHP_EOL;
-                }
-                $txt .= "端口：" . $node->v2_port . PHP_EOL;
-                $txt .= "加密方式：" . $node->v2_method . PHP_EOL;
-                $txt .= "用户ID：" . Auth::user()->vmess_id . PHP_EOL;
-                $txt .= "额外ID：" . $node->v2_alter_id . PHP_EOL;
-                $txt .= "传输协议：" . $node->v2_net . PHP_EOL;
-                $txt .= "伪装类型：" . $node->v2_type . PHP_EOL;
-                $txt .= $node->v2_host ? "伪装域名：" . $node->v2_host . PHP_EOL : "";
-                $txt .= $node->v2_path ? "路径：" . $node->v2_path . PHP_EOL : "";
-                $txt .= $node->v2_tls ? "TLS：tls" . PHP_EOL : "";
-
-                $node->txt = $txt;
-                $node->v2_scheme = $v2_scheme;
-                
-                $allNodes .= $v2_scheme . "\n";
+            // 生成文本配置信息
+            $txt = "服务器：" . ($node->server ? $node->server : $node->ip) . PHP_EOL;
+            if ($node->ipv6) {
+                $txt .= "IPv6：" . $node->ipv6 . PHP_EOL;
             }
+            $txt .= "端口：" . $node->v2_port . PHP_EOL;
+            $txt .= "加密方式：" . $node->v2_method . PHP_EOL;
+            $txt .= "用户ID：" . Auth::user()->vmess_id . PHP_EOL;
+            $txt .= "额外ID：" . $node->v2_alter_id . PHP_EOL;
+            $txt .= "传输协议：" . $node->v2_net . PHP_EOL;
+            $txt .= "伪装类型：" . $node->v2_type . PHP_EOL;
+            $txt .= $node->v2_host ? "伪装域名：" . $node->v2_host . PHP_EOL : "";
+            $txt .= $node->v2_path ? "路径：" . $node->v2_path . PHP_EOL : "";
+            $txt .= $node->v2_tls ? "TLS：tls" . PHP_EOL : "";
+
+            $node->txt = $txt;
+            $node->v2_scheme = $v2_scheme;
+            
+            $allNodes .= $v2_scheme . "\n";
 
             // 节点在线状态
             $nodeInfo = SsNodeInfo::query()->where('node_id', $node->id)->where('log_time', '>=', strtotime("-10 minutes"))->orderBy('id', 'desc')->first();
@@ -276,9 +233,6 @@ class UserController extends Controller
         if ($request->isMethod('POST')) {
             $old_password = trim($request->input('old_password'));
             $new_password = trim($request->input('new_password'));
-            $wechat = $request->input('wechat');
-            $qq = $request->input('qq');
-            $passwd = trim($request->input('passwd'));
 
             // 修改密码
             if ($old_password && $new_password) {
@@ -298,30 +252,6 @@ class UserController extends Controller
                     return Redirect::to('profile#tab_1')->withErrors('修改失败');
                 } else {
                     return Redirect::to('profile#tab_1')->with('successMsg', '修改成功');
-                }
-            }
-
-            // 修改联系方式
-            if ($wechat || $qq) {
-                if (empty(clean($wechat)) && empty(clean($qq))) {
-                    return Redirect::to('profile#tab_2')->withErrors('修改失败');
-                }
-
-                $ret = User::uid()->update(['wechat' => $wechat, 'qq' => $qq]);
-                if (!$ret) {
-                    return Redirect::to('profile#tab_2')->withErrors('修改失败');
-                } else {
-                    return Redirect::to('profile#tab_2')->with('successMsg', '修改成功');
-                }
-            }
-
-            // 修改代理密码
-            if ($passwd) {
-                $ret = User::uid()->update(['passwd' => $passwd]);
-                if (!$ret) {
-                    return Redirect::to('profile#tab_3')->withErrors('修改失败');
-                } else {
-                    return Redirect::to('profile#tab_3')->with('successMsg', '修改成功');
                 }
             }
 
@@ -613,6 +543,7 @@ class UserController extends Controller
                 $order = new Order();
                 $order->order_sn = date('ymdHis') . mt_rand(100000, 999999);
                 $order->user_id = $user->id;
+                $order->email = $user->username;
                 $order->goods_id = $goods_id;
                 $order->coupon_id = !empty($coupon) ? $coupon->id : 0;
                 $order->origin_amount = $goods->price;
@@ -734,6 +665,39 @@ class UserController extends Controller
                 // 取消重复返利
                 User::query()->where('id', $order->user_id)->update(['referral_uid' => 0]);
 
+                // 发送通知
+                $coupon_name = Coupon::query()->where('id', $order->coupon_id)->first();
+                if(empty($coupon_name)) {
+                    $couponResult = '无';
+                } else {
+                    $couponResult = $coupon_name->name . ':' . $coupon_name->sn;
+                }
+                // 邮件通知
+                if ($order->email) {
+                    $content = [
+                        'order_sn'      => $order->order_sn,
+                        'username'    => $user->username,
+                        'goods_name'    => $goods->name,
+                        'coupon'    => $couponResult,
+                        'pay_way'    => '余额支付',
+                        'created_at'    => $order->created_at->toDateTimeString(),
+                        'expire_at'     => $order->expire_at,
+                        'amount'    => $order->amount,
+                    ];
+    
+                    $logId = Helpers::addEmailLog($order->email, '订单支付成功', json_encode($content));//
+                    Mail::to($order->email)->send(new paymentSuccess($logId, $content));
+                    
+                    // 通知管理员
+                    if (self::$systemConfig['crash_warning_email']) {
+                        $logId = Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], '订单支付成功', json_encode($content));
+                        Mail::to(self::$systemConfig['crash_warning_email'])->send(new paymentSuccess($logId, $content));
+                    }
+                }
+
+                // ServerChan推送
+                ServerChan::send('订单支付成功', '|　参数　|　内容　|' . "\r\n" . '|:-:|:-:|' . "\r\n" . '|　用户名　|　' . $user->username . '　|' . "\r\n" . '|　订单编号　|　' . $order->order_sn . '　|' . "\r\n" . '|　商品　|　' . $goods->name . '　|' . "\r\n" . '|　优惠券　|　' . $couponResult . '　|' . "\r\n" . '|　终价　|　￥' . $order->amount . '　|' . "\r\n" . '|　支付方式　|　余额支付' . '　|');
+
                 DB::commit();
 
                 return Response::json(['status' => 'success', 'data' => '', 'message' => '支付成功']);
@@ -828,9 +792,6 @@ class UserController extends Controller
         try {
             // 更换订阅码
             UserSubscribe::uid()->update(['code' => Helpers::makeSubscribeCode()]);
-
-            // 更换连接密码
-            User::uid()->update(['passwd' => makeRandStr()]);
 
             DB::commit();
 

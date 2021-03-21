@@ -33,9 +33,6 @@
                                 <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="username" value="{{Request::get('username')}}" id="username" placeholder="用户名" onkeydown="if(event.keyCode==13){doSearch();}">
                             </div>
                             <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="port" value="{{Request::get('port')}}" id="port" placeholder="端口" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
                                 <select class="form-control" name="nodeId" id="nodeId" onChange="doSearch()">
                                     <option value="" @if(Request::get('nodeId') == '') selected @endif>选择节点</option>
                                     @foreach($nodeList as $node)

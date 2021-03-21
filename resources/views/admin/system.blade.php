@@ -41,13 +41,7 @@
                                             <a href="#tab_7" data-toggle="tab"> LOGO、客服、统计设置 </a>
                                         </li>
                                         <li>
-                                            <a href="#tab_8" data-toggle="tab"> 有赞云支付 </a>
-                                        </li>
-                                        <li>
-                                            <a href="#tab_9" data-toggle="tab"> 支付宝国际 </a>
-                                        </li>
-                                        <li>
-                                            <a href="#tab_10" data-toggle="tab"> 支付宝当面付 </a>
+                                            <a href="#tab_8" data-toggle="tab"> 支付宝支付 </a>
                                         </li>
                                         <li id="li_tab_geetest" class="tab_captcha" style="display:none;">
                                             <a href="#tab_geetest" data-toggle="tab"> Geetest 极验 </a>
@@ -220,36 +214,6 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="is_namesilo" class="col-md-3 control-label">Namesilo</label>
-                                                            <div class="col-md-9">
-                                                                <input type="checkbox" class="make-switch" @if($is_namesilo) checked @endif id="is_namesilo" data-on-color="success" data-off-color="danger" data-on-text="启用" data-off-text="关闭">
-                                                                <span class="help-block"> 添加、编辑节点的绑定域名时自动更新域名DNS记录值为节点IP（<a href="https://www.namesilo.com/account_api.php?rid=326ec20pa" target="_blank">创建API KEY</a>） </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="namesilo_key" class="col-md-3 control-label">Namesilo API KEY</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="text" name="namesilo_key" value="{{$namesilo_key}}" id="namesilo_key" placeholder="填入Namesilo上申请的API KEY" />
-                                                                    <span class="input-group-btn">
-                                                                        <button class="btn btn-success" type="button" onclick="setNamesiloKey()">修改</button>
-                                                                    </span>
-                                                                </div>
-                                                                <span class="help-block"> 域名必须是<a href="https://www.namesilo.com/?rid=326ec20pa" target="_blank">www.namesilo.com</a>上购买的 </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!--
-                                                    <div class="form-group">
-                                                        <label for="is_user_rand_port" class="col-md-2 control-label">自定义端口</label>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <input type="checkbox" class="make-switch" @if($is_user_rand_port) checked @endif id="is_user_rand_port" data-on-color="success" data-off-color="danger" data-on-text="启用" data-off-text="关闭">
-                                                            <span class="help-block"> 用户可以自定义端口 </span>
-                                                        </div>
-                                                    </div>
-                                                    -->
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
                                                             <label for="default_days" class="col-md-3 control-label">初始有效期</label>
                                                             <div class="col-md-9">
                                                                 <div class="input-group">
@@ -409,13 +373,6 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="mix_subscribe" class="col-md-3 control-label">混合订阅</label>
-                                                            <div class="col-md-9">
-                                                                <input type="checkbox" class="make-switch" @if($mix_subscribe) checked @endif id="mix_subscribe" data-on-color="success" data-off-color="danger" data-on-text="启用" data-off-text="关闭">
-                                                                <span class="help-block"> 启用后，订阅信息中将包含V2Ray节点信息（仅支持Shadowrocket、Quantumult、v2rayN） </span>
-                                                            </div>
-                                                        </div>
                                                         <div class="col-md-6 col-sm-6 col-xs-12">
                                                             <label for="rand_subscribe" class="col-md-3 control-label">随机订阅</label>
                                                             <div class="col-md-9">
@@ -829,159 +786,6 @@
                                             </form>
                                         </div>
                                         <div class="tab-pane" id="tab_8">
-                                            <form action="#" method="post" class="form-horizontal">
-                                                <div class="portlet-body">
-                                                    <div class="form-group">
-                                                        <div class="col-md-12">
-                                                            <div class="alert alert-info" style="text-align: center;">
-                                                                请在<a href="https://console.youzanyun.com/login" target="_blank" style="color: red;"> 有赞云 </a>设置应用的推送网址为：{{$website_url . '/api/yzy'}}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="is_youzan" class="col-md-3 control-label">本功能</label>
-                                                            <div class="col-md-9">
-                                                                <input type="checkbox" class="make-switch" @if($is_youzan) checked @endif id="is_youzan" data-on-color="success" data-off-color="danger" data-on-text="启用" data-off-text="关闭">
-                                                                <span class="help-block"> 请先到 <a href="https://console.youzanyun.com/dashboard">有赞云</a> 申请client_id和client_secret（<a href="https://github.com/ssrpanel/SSRPanel/wiki/%E6%9C%89%E8%B5%9E%E4%BA%91%E6%94%AF%E4%BB%98" target="_blank">申请教程</a>） </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="kdt_id" class="col-md-3 control-label">kdt_id</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="text" name="kdt_id" value="{{$kdt_id}}" id="kdt_id" />
-                                                                    <span class="input-group-btn">
-                                                                        <button class="btn btn-success" type="button" onclick="setKdtId()">修改</button>
-                                                                    </span>
-                                                                </div>
-                                                                <span class="help-block"> 即：授权店铺id </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="youzan_client_id" class="col-md-3 control-label">client_id</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="text" name="youzan_client_id" value="{{$youzan_client_id}}" id="youzan_client_id" />
-                                                                    <span class="input-group-btn">
-                                                                        <button class="btn btn-success" type="button" onclick="setYouzanClientId()">修改</button>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="youzan_client_secret" class="col-md-3 control-label">client_secret</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="text" name="youzan_client_secret" value="{{$youzan_client_secret}}" id="youzan_client_secret" />
-                                                                    <span class="input-group-btn">
-                                                                    <button class="btn btn-success" type="button" onclick="setYouzanClientSecret()">修改</button>
-                                                                </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="tab-pane" id="tab_9">
-                                            <form action="#" method="post" class="form-horizontal">
-                                                <div class="portlet-body">
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="is_alipay" class="col-md-3 control-label">本功能</label>
-                                                            <div class="col-md-9">
-                                                                <input type="checkbox" class="make-switch" @if($is_alipay) checked @endif id="is_alipay" data-on-color="success" data-off-color="danger" data-on-text="启用" data-off-text="关闭">
-                                                                <span class="help-block"> 请先到 <a href="https://global.alipay.com/" target="_blank">AliPay国际</a> 申请partner和key </span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_currency" class="col-md-3 control-label">结算币种</label>
-                                                            <div class="col-md-9">
-                                                                <select id="alipay_currency" class="form-control select2" name="alipay_currency">
-                                                                    <option value="USD" @if($alipay_currency == 'USD') selected @endif>美元</option>
-                                                                    <option value="HKD" @if($alipay_currency == 'HKD') selected @endif>港币</option>
-                                                                    <option value="JPY" @if($alipay_currency == 'JPY') selected @endif>日元</option>
-                                                                    <option value="EUR" @if($alipay_currency == 'EUR') selected @endif>欧元</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_sign_type" class="col-md-3 control-label">加密方式</label>
-                                                            <div class="col-md-9">
-                                                                <select id="alipay_sign_type" class="form-control select2" name="alipay_sign_type">
-                                                                    <option value="MD5" @if($alipay_sign_type == 'MD5') selected @endif>MD5</option>
-                                                                    <option value="RSA" @if($alipay_sign_type == 'RSA') selected @endif>RSA</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_transport" class="col-md-3 control-label">启用SSL验证</label>
-                                                            <div class="col-md-9">
-                                                                <select id="alipay_transport" class="form-control select2" name="alipay_transport">
-                                                                    <option value="http" @if($alipay_transport == 'http') selected @endif>否</option>
-                                                                    <option value="https" @if($alipay_transport == 'https') selected @endif>是</option>
-                                                                </select>
-                                                                <span class="help-block"> HTTPS站点需启用 </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_partner" class="col-md-3 control-label">partner</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="text" name="alipay_partner" value="{{$alipay_partner}}" id="alipay_partner" />
-                                                                    <span class="input-group-btn">
-                                                                        <button class="btn btn-success" type="button" onclick="setAlipayPartner()">修改</button>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_key" class="col-md-3 control-label">key</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="password" name="alipay_key" value="{{$alipay_key}}" id="alipay_key" />
-                                                                    <span class="input-group-btn">
-                                                                    <button class="btn btn-success" type="button" onclick="setAlipayKey()">修改</button>
-                                                                </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_private_key" class="col-md-3 control-label">RSA私钥</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="password" name="alipay_private_key" value="{{$alipay_private_key}}" id="alipay_private_key" />
-                                                                    <span class="input-group-btn">
-                                                                        <button class="btn btn-success" type="button" onclick="setAlipayPrivateKey()">修改</button>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <label for="alipay_public_key" class="col-md-3 control-label">RSA公钥</label>
-                                                            <div class="col-md-9">
-                                                                <div class="input-group">
-                                                                    <input class="form-control" type="password" name="alipay_public_key" value="{{$alipay_public_key}}" id="alipay_public_key" />
-                                                                    <span class="input-group-btn">
-                                                                    <button class="btn btn-success" type="button" onclick="setAlipayPublicKey()">修改</button>
-                                                                </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="tab-pane" id="tab_10">
                                             <form action="#" method="post" class="form-horizontal">
                                                 <div class="portlet-body">
                                                     <div class="form-group">

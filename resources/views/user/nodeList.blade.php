@@ -181,7 +181,7 @@
                                                             @else
                                                                 <span class="badge badge-info">节点正常</span>
                                                             @endif
-                                                            </span>
+                                                        </span>
                                                     </div>
                                                     <div class="mt-comment-text"> {{$node->desc}} </div>
                                                     <div class="mt-comment-details">
@@ -191,13 +191,16 @@
                                                                         <span class="badge badge-info">{{$vo->labelInfo->name}}</span>
                                                                     @endforeach
                                                                 @endif
+                                                                @if($node->traffic_rate > 1)
+                                                                <span class="badge badge-danger">{{$node->traffic_rate}}倍流量</span>
+                                                                @endif
                                                             </span>
                                                         <ul class="mt-comment-actions" style="display: block;">
                                                             <li>
                                                                 <a class="btn btn-sm green btn-outline" data-toggle="modal" href="#txt_{{$node->id}}" > <i class="fa fa-reorder"></i> </a>
                                                             </li>
                                                             <li>
-                                                                <a class="btn btn-sm green btn-outline" data-toggle="modal" href="#link_{{$node->id}}"> @if($node->type == 1) <i class="fa fa-paper-plane"></i> @else <i class="fa fa-vimeo"></i> @endif </a>
+                                                                <a class="btn btn-sm green btn-outline" data-toggle="modal" href="#link_{{$node->id}}"><i class="fa fa-vimeo"></i></a>
                                                             </li>
                                                             <li>
                                                                 <a class="btn btn-sm green btn-outline" data-toggle="modal" href="#qrcode_{{$node->id}}"> <i class="fa fa-qrcode"></i> </a>
@@ -240,20 +243,10 @@
                             <h4 class="modal-title">{{$node->name}}</h4>
                         </div>
                         <div class="modal-body">
-                            @if($node->type == 1)
-                                <textarea class="form-control" rows="5" readonly="readonly">{{$node->ssr_scheme}}</textarea>
-                                <a href="{{$node->ssr_scheme}}" class="btn purple uppercase" style="display: block; width: 100%;margin-top: 10px;">打开SSR</a>
-                                @if($node->ss_scheme)
-                                    <p></p>
-                                    <textarea class="form-control" rows="3" readonly="readonly">{{$node->ss_scheme}}</textarea>
-                                    <a href="{{$node->ss_scheme}}" class="btn blue uppercase" style="display: block; width: 100%;margin-top: 10px;">打开SS</a>
-                                @endif
-                            @else
-                                @if($node->v2_scheme)
-                                    <p></p>
-                                    <textarea class="form-control" rows="3" readonly="readonly">{{$node->v2_scheme}}</textarea>
-                                    <a href="{{$node->v2_scheme}}" class="btn blue uppercase" style="display: block; width: 100%;margin-top: 10px;">打开V2ray</a>
-                                @endif
+                            @if($node->v2_scheme)
+                                <p></p>
+                                <textarea class="form-control" rows="7" readonly="readonly">{{$node->v2_scheme}}</textarea>
+                                <a href="{{$node->v2_scheme}}" class="btn blue uppercase" style="display: block; width: 100%;margin-top: 10px;">打开V2ray</a>
                             @endif
                         </div>
                     </div>
@@ -261,7 +254,7 @@
             </div>
             <!-- 配置二维码 -->
             <div class="modal fade" id="qrcode_{{$node->id}}" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog @if($node->type == 2 || !$node->compatible) modal-sm @endif">
+                <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
@@ -269,30 +262,10 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                @if($node->type == 1)
-                                    @if($node->compatible)
-                                        <div class="col-md-6">
-                                            <div id="qrcode_ssr_img_{{$node->id}}" style="color: black;text-shadow: 0px 1px 0px #838383, 0px 2px 0px #AAAAAA, 0px 3px 0px #D2D2D2;font-size: 18px;text-align: center;">SSR</div>
-                                            </br>
-                                            <div style="text-align: center;"><a id="download_qrcode_ssr_img_{{$node->id}}">{{trans('home.download')}}</a></div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div id="qrcode_ss_img_{{$node->id}}" style="color: black;text-shadow: 0px 1px 0px #838383, 0px 2px 0px #AAAAAA, 0px 3px 0px #D2D2D2;font-size: 18px;text-align: center;">SS</div>
-                                            </br>
-                                            <div style="text-align: center;"><a id="download_qrcode_ss_img_{{$node->id}}">{{trans('home.download')}}</a></div>
-                                        </div>
-                                    @else
-                                        <div class="col-md-12">
-                                            <div id="qrcode_ssr_img_{{$node->id}}" style="text-align: center;"></div>
-                                            <div style="text-align: center;"><a id="download_qrcode_ssr_img_{{$node->id}}">{{trans('home.download')}}</a></div>
-                                        </div>
-                                    @endif
-                                @else
-                                    <div class="col-md-12">
-                                        <div id="qrcode_v2_img_{{$node->id}}" style="text-align: center;"></div>
-                                        <div style="text-align: center;"><a id="download_qrcode_v2_img_{{$node->id}}">{{trans('home.download')}}</a></div>
-                                    </div>
-                                @endif
+                                <div class="col-md-12">
+                                    <div id="qrcode_v2_img_{{$node->id}}" style="text-align: center;"></div>
+                                    <div style="text-align: center;"><a id="download_qrcode_v2_img_{{$node->id}}">{{trans('home.download')}}</a></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -350,17 +323,8 @@
 
         // 循环输出节点scheme用于生成二维码
         @foreach ($nodeList as $node)
-            @if($node->type == 1)
-                $('#qrcode_ssr_img_{{$node->id}}').qrcode("{{$node->ssr_scheme}}");
-                $('#download_qrcode_ssr_img_{{$node->id}}').attr({'download':'code','href':$('#qrcode_ssr_img_{{$node->id}} canvas')[0].toDataURL("image/png")})
-            @if($node->ss_scheme)
-                $('#qrcode_ss_img_{{$node->id}}').qrcode("{{$node->ss_scheme}}");
-                $('#download_qrcode_ss_img_{{$node->id}}').attr({'download':'code','href':$('#qrcode_ss_img_{{$node->id}} canvas')[0].toDataURL("image/png")})
-            @endif
-            @else
-                $('#qrcode_v2_img_{{$node->id}}').qrcode("{{$node->v2_scheme}}");
-                $('#download_qrcode_v2_img_{{$node->id}}').attr({'download':'code','href':$('#qrcode_v2_img_{{$node->id}} canvas')[0].toDataURL("image/png")})
-            @endif
+            $('#qrcode_v2_img_{{$node->id}}').qrcode("{{$node->v2_scheme}}");
+            $('#download_qrcode_v2_img_{{$node->id}}').attr({'download':'code','href':$('#qrcode_v2_img_{{$node->id}} canvas')[0].toDataURL("image/png")})
         @endforeach
 
         // 生成订阅地址二维码
@@ -369,7 +333,7 @@
 
         // 更换订阅地址
         function exchangeSubscribe() {
-            layer.confirm('更换订阅地址将导致：<br>1.旧地址立即失效；<br>2.连接密码被更改；', {icon: 7, title:'警告'}, function(index) {
+            layer.confirm('更换订阅地址将导致旧地址立即失效；', {icon: 7, title:'警告'}, function(index) {
                 $.post("{{url('exchangeSubscribe')}}", {_token:'{{csrf_token()}}'}, function (ret) {
                     layer.msg(ret.message, {time:1000}, function () {
                         if (ret.status == 'success') {

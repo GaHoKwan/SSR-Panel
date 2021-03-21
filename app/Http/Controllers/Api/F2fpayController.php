@@ -14,7 +14,7 @@ use App\Http\Models\SsNode;
 use App\Http\Models\SsNodeLabel;
 use App\Http\Models\User;
 use App\Http\Models\UserLabel;
-use App\Mail\sendUserInfo;
+use App\Mail\paymentSuccess;
 use Illuminate\Http\Request;
 use Log;
 use DB;
@@ -117,19 +117,11 @@ class F2fpayController extends Controller
         try {
             // 如果支付单中没有用户信息则创建一个用户
             if (!$payment->user_id) {
-                // 生成一个可用端口
-                $port = self::$systemConfig['is_rand_port'] ? Helpers::getRandPort() : Helpers::getOnlyPort();
-
                 $user = new User();
                 $user->username = '自动生成-' . $payment->order->email;
                 $user->password = Hash::make(makeRandStr());
-                $user->port = $port;
-                $user->passwd = makeRandStr();
                 $user->vmess_id = createGuid();
                 $user->enable = 1;
-                $user->method = Helpers::getDefaultMethod();
-                $user->protocol = Helpers::getDefaultProtocol();
-                $user->obfs = Helpers::getDefaultObfs();
                 $user->usage = 1;
                 $user->transfer_enable = 1; // 新创建的账号给1，防止定时任务执行时发现u + d >= transfer_enable被判为流量超限而封禁
                 $user->enable_time = date('Y-m-d');
@@ -258,36 +250,8 @@ class F2fpayController extends Controller
                 // 余额变动记录日志
                 $this->addUserBalanceLog($order->user_id, $order->oid, $order->user->balance, $order->user->balance + $goods->price, $goods->price, '用户在线充值');
             }
-
-            // 自动提号机：如果order的email值不为空
-            if ($order->email) {
-                $title = '自动发送账号信息';
-                $content = [
-                    'order_sn'      => $order->order_sn,
-                    'goods_name'    => $order->goods->name,
-                    'goods_traffic' => flowAutoShow($order->goods->traffic * 1048576),
-                    'port'          => $order->user->port,
-                    'passwd'        => $order->user->passwd,
-                    'method'        => $order->user->method,
-                    //'protocol'       => $order->user->protocol,
-                    //'protocol_param' => $order->user->protocol_param,
-                    //'obfs'           => $order->user->obfs,
-                    //'obfs_param'     => $order->user->obfs_param,
-                    'created_at'    => $order->created_at->toDateTimeString(),
-                    'expire_at'     => $order->expire_at
-                ];
-
-                // 获取可用节点列表
-                $labels = UserLabel::query()->where('user_id', $order->user_id)->get()->pluck('label_id');
-                $nodeIds = SsNodeLabel::query()->whereIn('label_id', $labels)->get()->pluck('node_id');
-                $nodeList = SsNode::query()->whereIn('id', $nodeIds)->orderBy('sort', 'desc')->orderBy('id', 'desc')->get()->toArray();
-                $content['serverList'] = $nodeList;
-
-                $logId = Helpers::addEmailLog($order->email, $title, json_encode($content));
-                Mail::to($order->email)->send(new sendUserInfo($logId, $content));
-            }
-
-            // ServerChan推送
+            
+            // 发送通知
             $user = User::query()->where('id', $order->user_id)->first();
             $coupon = Coupon::query()->where('id', $order->coupon_id)->first();
             if(empty($coupon)) {
@@ -295,26 +259,32 @@ class F2fpayController extends Controller
             } else {
                 $couponResult = $coupon->name . ':' . $coupon->sn;
             }
-            switch ($order->pay_way) {
-                case 1:
-                    $pay_way = '余额支付';
-                    break;
-                case 2:
-                    $pay_way = '有赞云支付';
-                    break;
-                case 3:
-                    $pay_way = 'TrimePay';
-                    break;
-                case 4:
-                    $pay_way = '支付宝国际';
-                    break;
-                case 5:
-                    $pay_way = '支付宝当面付';
-                    break;
-                default:
-                    $pay_way = '未知';
+            
+            // 邮件通知
+            if ($order->email) {
+                $content = [
+                    'order_sn'      => $order->order_sn,
+                    'username'    => $user->username,
+                    'goods_name'    => $goods->name,
+                    'coupon'    => $couponResult,
+                    'pay_way'    => '支付宝支付',
+                    'created_at'    => $order->created_at->toDateTimeString(),
+                    'expire_at'     => $order->expire_at,
+                    'amount'    => $order->amount
+                ];
+
+                $logId = Helpers::addEmailLog($order->email, '订单支付成功', json_encode($content));//
+                Mail::to($order->email)->send(new paymentSuccess($logId, $content));
+                
+                // 通知管理员
+                if (self::$systemConfig['crash_warning_email']) {
+                    $logId = Helpers::addEmailLog(self::$systemConfig['crash_warning_email'], '订单支付成功', json_encode($content));
+                    Mail::to(self::$systemConfig['crash_warning_email'])->send(new paymentSuccess($logId, $content));
+                }
             }
-            ServerChan::send('订单支付完成', '|　参数　|　内容　|' . "\r\n" . '|:-:|:-:|' . "\r\n" . '|　用户名　|　' . $user->username . '　|' . "\r\n" . '|　订单编号　|　' . $order->order_sn . '　|' . "\r\n" . '|　商品　|　' . $goods->name . '　|' . "\r\n" . '|　优惠券　|　' . $couponResult . '　|' . "\r\n" . '|　终价　|　￥' . $order->amount . '　|' . "\r\n" . '|　支付方式　|　' . $pay_way . '　|');
+
+            // ServerChan推送
+            ServerChan::send('订单支付成功', '|　参数　|　内容　|' . "\r\n" . '|:-:|:-:|' . "\r\n" . '|　用户名　|　' . $user->username . '　|' . "\r\n" . '|　订单编号　|　' . $order->order_sn . '　|' . "\r\n" . '|　商品　|　' . $goods->name . '　|' . "\r\n" . '|　优惠券　|　' . $couponResult . '　|' . "\r\n" . '|　终价　|　￥' . $order->amount . '　|' . "\r\n" . '|　支付方式　|　支付宝支付' . '　|');
 
             DB::commit();
         } catch (\Exception $e) {

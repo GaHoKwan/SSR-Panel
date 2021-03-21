@@ -14,137 +14,14 @@
                     <div class="portlet-body">
                         <ul class="nav nav-tabs">
                             <li @if(Request::get('tab') == '' || Request::get('tab') == '1') class="active" @endif>
-                                <a href="#tab1" data-toggle="tab"> 加密方式 </a>
+                                <a href="#tab1" data-toggle="tab"> 用户等级 </a>
                             </li>
                             <li @if(Request::get('tab') == '2') class="active" @endif>
-                                <a href="#tab2" data-toggle="tab"> 协议 </a>
-                            </li>
-                            <li @if(Request::get('tab') == '3') class="active" @endif>
-                                <a href="#tab3" data-toggle="tab"> 混淆 </a>
-                            </li>
-                            <li @if(Request::get('tab') == '4') class="active" @endif>
-                                <a href="#tab4" data-toggle="tab"> 等级 </a>
-                            </li>
-                            <li @if(Request::get('tab') == '5') class="active" @endif>
-                                <a href="#tab5" data-toggle="tab"> 国家地区 </a>
+                                <a href="#tab2" data-toggle="tab"> 节点国家地区 </a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade {{Request::get('tab') == '' || Request::get('tab') == '1' ? 'active in' : ''}}" id="tab1">
-                                <div class="actions">
-                                    <div class="btn-group">
-                                        <button class="btn sbold blue" data-toggle="modal" data-target="#add_config_modal"> 新增 <i class="fa fa-plus"></i> </button>
-                                    </div>
-                                </div>
-                                <div class="table-scrollable table-scrollable-borderless">
-                                    <table class="table table-hover table-light table-checkable">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 50%;"> 名称 </th>
-                                                <th style="width: 50%;"> 操作 </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        @if($method_list->isEmpty())
-                                            <tr>
-                                                <td colspan="2">暂无数据</td>
-                                            </tr>
-                                        @else
-                                            @foreach($method_list as $method)
-                                                <tr class="odd gradeX">
-                                                    <td> {{$method->name}} </td>
-                                                    <td>
-                                                        @if($method->is_default)
-                                                            <span class='label label-info'>默认</span>
-                                                        @else
-                                                            <button type="button" class="btn btn-sm blue btn-outline" onclick="setDefault('1', '{{$method->id}}')">默认</button>
-                                                            <button type="button" class="btn btn-sm red btn-outline" onclick="delConfig('1', '{{$method->id}}')">删除</button>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade {{Request::get('tab') == '2' ? 'active in' : ''}}" id="tab2">
-                                <div class="actions">
-                                    <div class="btn-group">
-                                        <button class="btn sbold blue" data-toggle="modal" data-target="#add_config_modal"> 新增 <i class="fa fa-plus"></i> </button>
-                                    </div>
-                                </div>
-                                <div class="table-scrollable table-scrollable-borderless">
-                                    <table class="table table-hover table-light table-checkable">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 50%;"> 名称 </th>
-                                                <th style="width: 50%;"> 操作 </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        @if($method_list->isEmpty())
-                                            <tr>
-                                                <td colspan="2">暂无数据</td>
-                                            </tr>
-                                        @else
-                                            @foreach($protocol_list as $protocol)
-                                                <tr class="odd gradeX">
-                                                    <td> {{$protocol->name}} @if($protocol->is_default) <small><span class='label label-info label-sm'>默认</span></small> @endif </td>
-                                                    <td>
-                                                        @if(!$protocol->is_default)
-                                                            <button type="button" class="btn btn-sm blue btn-outline" onclick="setDefault('2', '{{$protocol->id}}')">默认</button>
-                                                            <button type="button" class="btn btn-sm red btn-outline" onclick="delConfig('2', '{{$protocol->id}}')">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade {{Request::get('tab') == '3' ? 'active in' : ''}}" id="tab3">
-                                <div class="actions">
-                                    <div class="btn-group">
-                                        <button class="btn sbold blue" data-toggle="modal" data-target="#add_config_modal"> 新增 <i class="fa fa-plus"></i> </button>
-                                    </div>
-                                </div>
-                                <div class="table-scrollable table-scrollable-borderless">
-                                    <table class="table table-hover table-light table-checkable">
-                                        <thead>
-                                        <tr>
-                                            <th style="width: 50%;"> 名称 </th>
-                                            <th style="width: 50%;"> 操作 </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @if($obfs_list->isEmpty())
-                                            <tr>
-                                                <td colspan="2">暂无数据</td>
-                                            </tr>
-                                        @else
-                                            @foreach($obfs_list as $obfs)
-                                                <tr class="odd gradeX">
-                                                    <td> {{$obfs->name}} @if($obfs->is_default) <small><span class='label label-info label-sm'>默认</span></small> @endif </td>
-                                                    <td>
-                                                        @if(!$obfs->is_default)
-                                                            <button type="button" class="btn btn-sm blue btn-outline" onclick="setDefault('3', '{{$obfs->id}}')">默认</button>
-                                                            <button type="button" class="btn btn-sm red btn-outline" onclick="delConfig('3', '{{$obfs->id}}')">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade {{Request::get('tab') == '4' ? 'active in' : ''}}" id="tab4">
                                 <div class="actions">
                                     <div class="btn-group">
                                         <button class="btn sbold blue" data-toggle="modal" data-target="#add_level_modal"> 新增 <i class="fa fa-plus"></i> </button>
@@ -182,7 +59,7 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="tab-pane fade {{Request::get('tab') == '5' ? 'active in' : ''}}" id="tab5">
+                            <div class="tab-pane fade {{Request::get('tab') == '2' ? 'active in' : ''}}" id="tab2">
                                 <div class="actions">
                                     <div class="btn-group">
                                         <button class="btn sbold blue" data-toggle="modal" data-target="#add_country_modal"> 新增 <i class="fa fa-plus"></i> </button>
@@ -226,45 +103,6 @@
                             </div>
                         </div>
                         <div class="clearfix margin-top-20"></div>
-                        <div id="add_config_modal" class="modal fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static" data-keyboard="false">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                        <h4 class="modal-title">新增配置</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="alert alert-danger" style="display: none;" id="msg"></div>
-                                        <!-- BEGIN FORM-->
-                                        <form action="#" method="post" class="form-horizontal">
-                                            <div class="form-body">
-                                                <div class="form-group">
-                                                    <label for="type" class="col-md-4 control-label">类型</label>
-                                                    <div class="col-md-6">
-                                                        <select class="form-control" name="type" id="type">
-                                                            <option value="1" selected>加密方式</option>
-                                                            <option value="2">协议</option>
-                                                            <option value="3">混淆</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="name" class="col-md-4 control-label"> 名称 </label>
-                                                    <div class="col-md-6">
-                                                        <input type="text" class="form-control" name="name" id="name" placeholder="">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <!-- END FORM-->
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" data-dismiss="modal" class="btn dark btn-outline">关闭</button>
-                                        <button type="button" class="btn red btn-outline" onclick="return addConfig();">提交</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <div id="add_level_modal" class="modal fade" tabindex="-1" data-focus-on="input:first" data-backdrop="static" data-keyboard="false">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -503,72 +341,5 @@
             });
         }
 
-        // 添加配置
-        function addConfig() {
-            var _token = '{{csrf_token()}}';
-            var name = $("#name").val();
-            var type = $("#type").val();
-
-            if (name == '') {
-                $("#msg").show().html("名称不能为空");
-                $("#name").focus();
-                return false;
-            }
-
-            $.ajax({
-                url:'{{url('admin/config')}}',
-                type:"POST",
-                data:{_token:_token, name:name, type:type},
-                beforeSend:function(){
-                    $("#msg").show().html("正在添加");
-                },
-                success:function(ret){
-                    if (ret.status == 'fail') {
-                        $("#msg").show().html(ret.message);
-                        return false;
-                    }
-
-                    $("#add_config_modal").modal("hide");
-                },
-                error:function(){
-                    $("#msg").show().html("请求错误，请重试");
-                },
-                complete:function(){}
-            });
-        }
-
-        // 删除配置
-        function delConfig(tabId, id) {
-            layer.confirm('确定删除配置？', {icon: 2, title:'警告'}, function(index) {
-                $.post("{{url('admin/delConfig')}}", {id:id, _token:'{{csrf_token()}}'}, function(ret) {
-                    layer.msg(ret.message, {time:1000}, function() {
-                        if (ret.status == 'success') {
-                            window.location.href = '{{url('admin/config?tab=')}}' + tabId;
-                        }
-                    });
-                });
-
-                layer.close(index);
-            });
-        }
-
-        // 置为默认
-        function setDefault(tabId, id) {
-            var _token = '{{csrf_token()}}';
-            $.ajax({
-                type: "POST",
-                url: "{{url('admin/setDefaultConfig')}}",
-                async: false,
-                data: {_token:_token, id: id},
-                dataType: 'json',
-                success: function (ret) {
-                    layer.msg(ret.message, {time:1000}, function() {
-                        if (ret.status == 'success') {
-                            window.location.href = '{{url('admin/config?tab=')}}' + tabId;
-                        }
-                    });
-                }
-            });
-        }
     </script>
 @endsection

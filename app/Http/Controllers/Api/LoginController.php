@@ -96,16 +96,9 @@ class LoginController extends Controller
                 $temp_node = [
                     'name'          => $node->name,
                     'server'        => $node->server,
-                    'server_port'   => $user->port,
-                    'method'        => $user->method,
-                    'obfs'          => $user->obfs,
                     'flags'         => $url . '/assets/images/country/' . $node->country_code . '.png',
-                    'obfsparam'     => '',
-                    'password'      => $user->passwd,
                     'group'         => '',
-                    'protocol'      => $user->protocol,
-                    'protoparam'    => '',
-                    'protocolparam' => ''
+                    'protoparam'    => ''
                 ];
                 $c_nodes = $c_nodes->push($temp_node);
             }

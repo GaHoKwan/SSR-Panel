@@ -40,56 +40,6 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="col-md-3 control-label">用途</label>
-                                                <div class="col-md-8">
-                                                    <div class="mt-checkbox-inline">
-                                                        <label class="mt-checkbox">
-                                                            <input type="checkbox" name="usage" value="1" {{in_array(1, $user->usage) ? 'checked' : ''}} /> 手机
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-checkbox">
-                                                            <input type="checkbox" name="usage" value="2" {{in_array(2, $user->usage) ? 'checked' : ''}} /> 电脑
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-checkbox">
-                                                            <input type="checkbox" name="usage" value="3" {{in_array(3, $user->usage) ? 'checked' : ''}} /> 路由器
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-checkbox">
-                                                            <input type="checkbox" name="usage" value="4" {{in_array(4, $user->usage) ? 'checked' : ''}} /> 平板
-                                                            <span></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="pay_way" class="col-md-3 control-label">付费方式</label>
-                                                <div class="col-md-8">
-                                                    <div class="mt-radio-inline">
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="pay_way" value="0" {{$user->pay_way == 0 ? 'checked' : ''}} /> 免费
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="pay_way" value="1" {{$user->pay_way == 1 ? 'checked' : ''}} /> 月付
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="pay_way" value="2" {{$user->pay_way == 2 ? 'checked' : ''}} /> 季付
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="pay_way" value="3" {{$user->pay_way == 3 ? 'checked' : ''}} /> 半年付
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="pay_way" value="4" {{$user->pay_way == 4 ? 'checked' : ''}} /> 年付
-                                                            <span></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="level" class="col-md-3 control-label">级别</label>
                                                 <div class="col-md-8">
                                                     <select class="form-control" name="level" id="level">
@@ -170,33 +120,6 @@
                                             </div>
                                             <hr>
                                             <div class="form-group">
-                                                <label for="gender" class="col-md-3 control-label">性别</label>
-                                                <div class="col-md-8">
-                                                    <div class="mt-radio-inline">
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="gender" value="1" {{$user->gender == '1' ? 'checked' : ''}} /> 男
-                                                            <span></span>
-                                                        </label>
-                                                        <label class="mt-radio">
-                                                            <input type="radio" name="gender" value="0" {{$user->gender == '0' ? 'checked' : ''}} /> 女
-                                                            <span></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="wechat" class="col-md-3 control-label">微信</label>
-                                                <div class="col-md-8">
-                                                    <input type="text" class="form-control" name="wechat" value="{{$user->wechat}}" id="wechat" autocomplete="off" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="qq" class="col-md-3 control-label">QQ</label>
-                                                <div class="col-md-8">
-                                                    <input type="text" class="form-control" name="qq" value="{{$user->qq}}" id="qq" autocomplete="off" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="remark" class="col-md-3 control-label">备注</label>
                                                 <div class="col-md-8">
                                                     <textarea class="form-control" rows="3" name="remark" id="remark">{{$user->remark}}</textarea>
@@ -221,38 +144,6 @@
                                         </div>
                                         <div class="portlet-body">
                                             <div class="form-group">
-                                                <label for="port" class="col-md-3 control-label">端口</label>
-                                                <div class="col-md-8">
-                                                    <div class="input-group">
-                                                        <input class="form-control" type="text" name="port" value="{{$user->port}}" id="port" autocomplete="off" />
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-success" type="button" onclick="makePort()"> <i class="fa fa-refresh"></i> </button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="passwd" class="col-md-3 control-label">密码</label>
-                                                <div class="col-md-8">
-                                                    <div class="input-group">
-                                                        <input class="form-control" type="text" name="passwd" value="{{$user->passwd}}" id="passwd" autocomplete="off" />
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-success" type="button" onclick="makePasswd()"> <i class="fa fa-refresh"></i> </button>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="method" class="col-md-3 control-label">加密方式</label>
-                                                <div class="col-md-8">
-                                                    <select class="form-control" name="method" id="method">
-                                                        @foreach ($method_list as $method)
-                                                            <option value="{{$method->name}}" @if($method->name == $user->method) selected @endif>{{$method->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
                                                 <label for="transfer_enable" class="col-md-3 control-label">可用流量</label>
                                                 <div class="col-md-8">
                                                     <div class="input-group">
@@ -274,39 +165,6 @@
                                                             <span></span>
                                                         </label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="form-group">
-                                                <label for="protocol" class="col-md-3 control-label">协议</label>
-                                                <div class="col-md-8">
-                                                    <select class="form-control" name="protocol" id="protocol">
-                                                        @foreach ($protocol_list as $protocol)
-                                                            <option value="{{$protocol->name}}" @if($protocol->name == $user->protocol) selected @endif>{{$protocol->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="obfs" class="col-md-3 control-label">混淆</label>
-                                                <div class="col-md-8">
-                                                    <select class="form-control" name="obfs" id="obfs">
-                                                        @foreach ($obfs_list as $obfs)
-                                                            <option value="{{$obfs->name}}" @if($obfs->name == $user->obfs) selected @endif>{{$obfs->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="protocol_param" class="col-md-3 control-label">协议参数</label>
-                                                <div class="col-md-8">
-                                                    <input type="text" class="form-control" name="protocol_param" value="{{$user->protocol_param}}" id="protocol_param" placeholder="节点单端口时无效" autocomplete="off" />
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="obfs_param" class="col-md-3 control-label">混淆参数</label>
-                                                <div class="col-md-8">
-                                                    <textarea class="form-control" rows="5" name="obfs_param" id="obfs_param" placeholder="不填则取节点自定义混淆参数">{{$user->obfs_param}}</textarea>
                                                 </div>
                                             </div>
                                             <hr>
@@ -443,39 +301,19 @@
             var id = '{{Request::get('id')}}';
             var username = $('#username').val();
             var password = $('#password').val();
-            var pay_way = $("input:radio[name='pay_way']:checked").val();
             var balance = $('#balance').val();
             var status = $("input:radio[name='status']:checked").val();
             var labels = $('#labels').val();
             var enable_time = $('#enable_time').val();
             var expire_time = $('#expire_time').val();
-            var gender = $("input:radio[name='gender']:checked").val();
-            var wechat = $('#wechat').val();
-            var qq = $('#qq').val();
             var is_admin = $("input:radio[name='is_admin']:checked").val();
             var remark = $('#remark').val();
             var level = $("#level option:selected").val();
-            var port = $('#port').val();
-            var passwd = $('#passwd').val();
-            var method = $('#method').val();
             var transfer_enable = $('#transfer_enable').val();
             var enable = $("input:radio[name='enable']:checked").val();
-            var protocol = $('#protocol').val();
-            var protocol_param = $('#protocol_param').val();
-            var obfs = $('#obfs').val();
-            var obfs_param = $('#obfs_param').val();
             var speed_limit_per_con = $('#speed_limit_per_con').val();
             var speed_limit_per_user = $('#speed_limit_per_user').val();
             var vmess_id = $('#vmess_id').val();
-
-            // 用途
-            var usage = '';
-            $.each($("input:checkbox[name='usage']"), function(){
-                if (this.checked) {
-                    usage += $(this).val() + ',';
-                }
-            });
-            usage = usage.substring(0, usage.length - 1);
 
             $.ajax({
                 type: "POST",
@@ -486,28 +324,16 @@
                     id:id,
                     username: username,
                     password:password,
-                    usage:usage,
-                    pay_way:pay_way,
                     balance:balance,
                     status:status,
                     labels:labels,
                     enable_time:enable_time,
                     expire_time:expire_time,
-                    gender:gender,
-                    wechat:wechat,
-                    qq:qq,
                     is_admin:is_admin,
                     remark:remark,
                     level:level,
-                    port:port,
-                    passwd:passwd,
-                    method:method,
                     transfer_enable:transfer_enable,
                     enable:enable,
-                    protocol:protocol,
-                    protocol_param:protocol_param,
-                    obfs:obfs,
-                    obfs_param:obfs_param,
                     speed_limit_per_con:speed_limit_per_con,
                     speed_limit_per_user:speed_limit_per_user,
                     vmess_id: vmess_id
@@ -529,24 +355,10 @@
             return false;
         }
 
-        // 生成随机端口
-        function makePort() {
-            $.get("{{url('admin/makePort')}}",  function(ret) {
-                $("#port").val(ret);
-            });
-        }
-
         // 生成随机VmessId
         function makeVmessId() {
             $.get("{{url('makeVmessId')}}",  function(ret) {
                 $("#vmess_id").val(ret);
-            });
-        }
-
-        // 生成随机密码
-        function makePasswd() {
-            $.get("{{url('makePasswd')}}",  function(ret) {
-                $("#passwd").val(ret);
             });
         }
 

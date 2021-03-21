@@ -8,7 +8,7 @@
         <div class="portlet light bordered">
             <div class="portlet-body">
                 <div class="alert alert-info" style="text-align: center;">
-                    请使用<strong style="color:red;">支付宝@if(\App\Components\Helpers::systemConfig()['is_youzan'])、微信@endif</strong>进行付款操作
+                    请使用<strong style="color:red;">支付宝</strong>进行付款操作
                 </div>
                 <div class="row" style="text-align: center; font-size: 1.05em;">
                     <div class="col-md-12">
@@ -40,6 +40,11 @@
                                         <img id="qr" src="{{$payment->qr_local_url}}" onclick="jumptoalipay();"/>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td colspan="2" align="center">
+                                        <button class="btn btn-info" onclick="javascrtpt:window.location.href='{{$payment->qr_code}}'"> 打开手机支付宝 </button>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </div>
@@ -55,11 +60,6 @@
     <script type="text/javascript">
         // 每800毫秒查询一次订单状态
         $(document).ready(function(){
-            // 支付宝直接跳转支付
-            @if(\App\Components\Helpers::systemConfig()['is_alipay'])
-                document.body.innerHTML += unescapeHTML("{{$payment->qr_code}}");
-                document.forms['alipaysubmit'].submit();
-            @endif
             setInterval("getStatus()", 800);
         });
 

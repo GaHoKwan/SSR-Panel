@@ -23,7 +23,6 @@
                         </div>
                         <div class="actions">
                             <div class="btn-group btn-group-devided">
-                                <button class="btn sbold red" onclick="exportSSJson()"> 导出JSON </button>
                                 <button class="btn sbold blue" onclick="batchAddUsers()"> 批量生成 </button>
                                 <button class="btn sbold blue" onclick="addUser()"> 添加用户 </button>
                             </div>
@@ -32,29 +31,7 @@
                     <div class="portlet-body">
                         <div class="row">
                             <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="id" value="{{Request::get('id')}}" id="id" placeholder="用户ID" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
                                 <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="username" value="{{Request::get('username')}}" id="username" placeholder="用户名" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="wechat" value="{{Request::get('wechat')}}" id="wechat" placeholder="微信" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="qq" value="{{Request::get('qq')}}" id="qq" placeholder="QQ" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 form-control" name="port" value="{{Request::get('port')}}" id="port" placeholder="端口" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
-                                <select class="form-control" name="pay_way" id="pay_way" onChange="doSearch()">
-                                    <option value="" @if(Request::get('pay_way') == '') selected @endif>付费方式</option>
-                                    <option value="0" @if(Request::get('pay_way') == '0') selected @endif>免费</option>
-                                    <option value="1" @if(Request::get('pay_way') == '1') selected @endif>月付</option>
-                                    <option value="2" @if(Request::get('pay_way') == '2') selected @endif>季付</option>
-                                    <option value="3" @if(Request::get('pay_way') == '3') selected @endif>半年付</option>
-                                    <option value="4" @if(Request::get('pay_way') == '4') selected @endif>年付</option>
-                                </select>
                             </div>
                             <div class="col-md-3 col-sm-4 col-xs-12">
                                 <select class="form-control" name="status" id="status" onChange="doSearch()">
@@ -83,12 +60,8 @@
                                     <th> # </th>
                                     <th> 用户名 </th>
                                     <th> 订阅码 </th>
-                                    <th> 端口 </th>
-                                    <th> 连接密码 </th>
-                                    <th> 加密方式 </th>
-                                    <!--<th> 协议 </th>
-                                    <th> 混淆 </th>-->
-                                    <th> 已消耗 </th>
+                                    <th> Vmess_id </th>
+                                    <th> 流量信息 </th>
                                     <th> 最后使用 </th>
                                     <th> 有效期 </th>
                                     <th> 状态 </th>
@@ -106,12 +79,8 @@
                                             <tr class="odd gradeX {{$user->trafficWarning ? 'danger' : ''}}">
                                                 <td> {{$user->id}} </td>
                                                 <td> {{$user->username}} </td>
-                                                <td> <a href="javascript:;" class="copySubscribeLink" data-clipboard-text="{{$user->link}}" title="点击复制订阅链接">{{$user->subscribe->code}}</a> </td>
-                                                <td> <span class="label label-danger"> {{$user->port ? $user->port : '未分配'}} </span> </td>
-                                                <td> <span class="label label-default"> {{$user->passwd}} </span> </td>
-                                                <td> <span class="label label-default"> {{$user->method}} </span> </td>
-                                                <!--<td> <span class="label label-default"> {{$user->protocol}} </span> </td>
-                                                <td> <span class="label label-default"> {{$user->obfs}} </span> </td>-->
+                                                <td> <a href="javascript:;" class="copyLink" data-clipboard-text="{{$user->link}}" title="点击复制订阅链接">{{$user->subscribe->code}}</a> </td>
+                                                <td> <a href="javascript:;" class="label label-info copyLink" data-clipboard-text="{{$user->vmess_id ? $user->vmess_id : '未分配'}}" title="点击复制">{{$user->vmess_id ? $user->vmess_id : '未分配'}}</a> </td>
                                                 <td class="center"> {{$user->used_flow}} / {{$user->transfer_enable}} </td>
                                                 <td class="center"> {{empty($user->t) ? '未使用' : date('Y-m-d H:i:s', $user->t)}} </td>
                                                 <td class="center">
@@ -199,11 +168,6 @@
 @section('script')
     <script src="/assets/global/plugins/clipboardjs/clipboard.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        // 导出原版json配置
-        function exportSSJson() {
-            layer.msg("成功导出原版SS的用户配置信息，加密方式为系统默认的加密方式");
-            window.location.href = '{{url('admin/exportSSJson')}}';
-        }
 
         // 批量生成账号
         function batchAddUsers() {
@@ -249,14 +213,12 @@
         function doSearch() {
             var id = $("#id").val();
             var username = $("#username").val();
-            var wechat = $("#wechat").val();
-            var qq = $("#qq").val();
             var port = $("#port").val();
             var pay_way = $("#pay_way option:checked").val();
             var status = $("#status option:checked").val();
             var enable = $("#enable option:checked").val();
 
-            window.location.href = '{{url('admin/userList')}}' + '?id=' + id +'&username=' + username + '&wechat=' + wechat + '&qq=' + qq + '&port=' + port + '&pay_way=' + pay_way + '&status=' + status + '&enable=' + enable;
+            window.location.href = '{{url('admin/userList')}}' + '?id=' + id +'&username=' + username + '&port=' + port + '&pay_way=' + pay_way + '&status=' + status + '&enable=' + enable;
         }
 
         // 重置
@@ -322,10 +284,10 @@
             $('.table-scrollable').css( "overflow", "auto" );
         });
 
-        // 复制订阅链接
-        var clipboard = new Clipboard('.copySubscribeLink');
+        // 复制链接
+        var clipboard = new Clipboard('.copyLink');
         clipboard.on('success', function(e) {
-            layer.alert("成功复制该用户的订阅链接", {icon: 1, title:'提示'});
+            layer.alert("成功复制", {icon: 1, title:'提示'});
         });
         clipboard.on('error', function(e) {
             console.log(e);

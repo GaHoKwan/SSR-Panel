@@ -250,12 +250,6 @@ class AuthController extends Controller
                 }
             }
 
-            // 获取可用端口
-            $port = self::$systemConfig['is_rand_port'] ? Helpers::getRandPort() : Helpers::getOnlyPort();
-            if ($port > self::$systemConfig['max_port']) {
-                return Redirect::back()->withInput()->withErrors('系统不再接受新用户，请联系管理员');
-            }
-
             // 获取aff
             $affArr = $this->getAff($request->code, intval($request->aff));
             $referral_uid = $affArr['referral_uid'];
@@ -266,13 +260,8 @@ class AuthController extends Controller
             $user = new User();
             $user->username = $request->username;
             $user->password = Hash::make($request->password);
-            $user->port = $port;
-            $user->passwd = makeRandStr();
             $user->vmess_id = createGuid();
             $user->transfer_enable = $transfer_enable;
-            $user->method = Helpers::getDefaultMethod();
-            $user->protocol = Helpers::getDefaultProtocol();
-            $user->obfs = Helpers::getDefaultObfs();
             $user->enable_time = date('Y-m-d H:i:s');
             $user->expire_time = date('Y-m-d H:i:s', strtotime("+" . self::$systemConfig['default_days'] . " days"));
             $user->reg_ip = getClientIp();

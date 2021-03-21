@@ -269,34 +269,10 @@
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li class="nav-item {{in_array(Request::path(), ['admin/decompile']) ? 'active open' : ''}}">
-                            <a href="{{url('admin/decompile')}}" class="nav-link">
-                                <i class="icon-reload"></i>
-                                <span class="title">反解析</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['admin/convert']) ? 'active open' : ''}}">
-                            <a href="{{url('admin/convert')}}" class="nav-link">
-                                <i class="icon-refresh"></i>
-                                <span class="title">格式转换</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['admin/import']) ? 'active open' : ''}}">
-                            <a href="{{url('admin/import')}}" class="nav-link">
-                                <i class="icon-plus"></i>
-                                <span class="title">数据导入</span>
-                            </a>
-                        </li>
                         <li class="nav-item {{in_array(Request::path(), ['admin/trafficLog']) ? 'active open' : ''}}">
                             <a href="{{url('admin/trafficLog')}}" class="nav-link">
                                 <i class="fa fa-area-chart"></i>
                                 <span class="title">流量日志</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['admin/analysis']) ? 'active open' : ''}}">
-                            <a href="{{url('admin/analysis')}}" class="nav-link">
-                                <i class="fa fa-bar-chart"></i>
-                                <span class="title">日志分析</span>
                             </a>
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['sensitiveWords/list', 'sensitiveWords/add']) ? 'active open' : ''}}">
@@ -309,12 +285,6 @@
                             <a href="{{url('admin/emailLog')}}" class="nav-link">
                                 <i class="fa fa-envelope-o"></i>
                                 <span class="title">邮件投递记录</span>
-                            </a>
-                        </li>
-                        <li class="nav-item {{in_array(Request::path(), ['payment/callbackList']) ? 'active open' : ''}}">
-                            <a href="{{url('payment/callbackList')}}" class="nav-link">
-                                <i class="fa fa-th"></i>
-                                <span class="title">支付回调日志</span>
                             </a>
                         </li>
                         <li class="nav-item {{in_array(Request::path(), ['logs']) ? 'active open' : ''}}">

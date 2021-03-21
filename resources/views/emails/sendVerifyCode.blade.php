@@ -11,7 +11,7 @@
   	 	<img style="max-width:100%;" src="http://vnet.luo2888.cn/assets/images/mail-design.png">
   	 	<br><br>
   	 	<div style="font-size: 0.8em;color: #000;line-height: 1.5em;width:80%;margin: 0.5em auto 0.5em;">
-  	 	  <p>&copy;&nbsp;2017-2019&nbsp;<a href="http://www.luo2888.cn">Luo2888</a>.Inc</p>
+  	 	  <p>&copy;&nbsp;2017-2021&nbsp;<a href="http://www.luo2888.cn">Luo2888</a>.Inc</p>
   	 	</div>
   	 </div>
   </div>

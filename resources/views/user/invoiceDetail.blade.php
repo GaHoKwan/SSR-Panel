@@ -24,28 +24,6 @@
                     <h2 class="invoice-title">{{trans('home.invoice_table_expire_at')}}</h2>
                     <p class="invoice-desc">{{$order->expire_at}}</p>
                 </div>
-                <!--
-                <div class="col-xs-3">
-                    <h2 class="invoice-title uppercase">{{trans('home.invoice_table_status')}}</h2>
-                    <p class="invoice-desc">
-                        @if(!$order->is_expire)
-                            @if($order->status == -1)
-                                {{trans('home.invoice_table_closed')}}
-                            @elseif($order->status == 0)
-                                {{trans('home.invoice_table_wait_payment')}}
-                            @elseif($order->status == 1)
-                                {{trans('home.invoice_table_wait_confirm')}}
-                            @elseif($order->status == 2)
-                                {{trans('home.invoice_table_wait_active')}}
-                            @else
-                                {{trans('home.invoice_table_expired')}}
-                            @endif
-                        @else
-                            {{trans('home.invoice_table_expired')}}
-                        @endif
-                    </p>
-                </div>
-                -->
             </div>
             <div class="row invoice-body">
                 <div class="col-xs-12 table-responsive">

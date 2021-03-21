@@ -27,15 +27,6 @@
                                 <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="username" value="{{Request::get('username')}}" id="username" placeholder="用户名" onkeydown="if(event.keyCode==13){doSearch();}">
                             </div>
                             <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="wechat" value="{{Request::get('wechat')}}" id="wechat" placeholder="微信" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 col-sm-4 col-xs-12 form-control" name="qq" value="{{Request::get('qq')}}" id="qq" placeholder="QQ" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
-                                <input type="text" class="col-md-4 form-control" name="port" value="{{Request::get('port')}}" id="port" placeholder="端口" onkeydown="if(event.keyCode==13){doSearch();}">
-                            </div>
-                            <div class="col-md-3 col-sm-4 col-xs-12">
                                 <button type="button" class="btn blue" onclick="doSearch();">查询</button>
                                 <button type="button" class="btn grey" onclick="doReset();">重置</button>
                             </div>
@@ -46,9 +37,6 @@
                                     <tr>
                                         <th> # </th>
                                         <th> 用户名 </th>
-                                        <th> 端口 </th>
-                                        <th> 状态 </th>
-                                        <th> 代理 </th>
                                         <th> 连接IP </th>
                                     </tr>
                                 </thead>
@@ -62,23 +50,6 @@
                                             <tr class="odd gradeX">
                                                 <td> {{$user->id}} </td>
                                                 <td> {{$user->username}} </td>
-                                                <td> <span class="label label-danger"> {{$user->port}} </span> </td>
-                                                <td>
-                                                    @if ($user->status > 0)
-                                                        <span class="label label-info">正常</span>
-                                                    @elseif ($user->status < 0)
-                                                        <span class="label label-danger">禁用</span>
-                                                    @else
-                                                        <span class="label label-default">未激活</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if ($user->enable)
-                                                        <span class="label label-info">启用</span>
-                                                    @else
-                                                        <span class="label label-danger">禁用</span>
-                                                    @endif
-                                                </td>
                                                 <td>
                                                     @if(!$user->onlineIPList->isEmpty())
                                                         <table class="table table-hover table-light">

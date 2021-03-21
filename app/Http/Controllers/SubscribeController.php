@@ -151,11 +151,6 @@ class SubscribeController extends Controller
 
         $query = SsNode::query()->selectRaw('ss_node.*')->leftjoin("ss_node_label", "ss_node.id", "=", "ss_node_label.node_id");
 
-        // 启用混合订阅时，加入V2Ray节点，未启用时仅下发SSR节点信息
-        if (!self::$systemConfig['mix_subscribe']) {
-            $query->where('ss_node.type', 1);
-        }
-
         $nodeList = $query->where('ss_node.status', 1)->where('ss_node.is_subscribe', 1)->whereIn('ss_node_label.label_id', $userLabelIds)->groupBy('ss_node.id')->orderBy('ss_node.sort', 'desc')->orderBy('ss_node.id', 'asc')->get()->toArray();
         if (empty($nodeList)) {
             exit($this->noneNode());
@@ -180,44 +175,23 @@ class SubscribeController extends Controller
             if (self::$systemConfig['subscribe_max'] && $key >= self::$systemConfig['subscribe_max']) {
                 break;
             }
-
-            // 获取分组名称
-            if ($node['type'] == 1) {
-                $group = SsGroup::query()->where('id', $node['group_id'])->first();
-
-                $obfs_param = $user->obfs_param ? $user->obfs_param : $node['obfs_param'];
-                $protocol_param = $node['single'] ? $user->port . ':' . $user->passwd : $user->protocol_param;
-
-                // 生成ssr scheme
-                $ssr_str = ($node['server'] ? $node['server'] : $node['ip']) . ':' . ($node['single'] ? $node['single_port'] : $user->port);
-                $ssr_str .= ':' . ($node['single'] ? $node['single_protocol'] : $user->protocol) . ':' . ($node['single'] ? $node['single_method'] : $user->method);
-                $ssr_str .= ':' . ($node['single'] ? $node['single_obfs'] : $user->obfs) . ':' . ($node['single'] ? base64url_encode($node['single_passwd']) : base64url_encode($user->passwd));
-                $ssr_str .= '/?obfsparam=' . base64url_encode($obfs_param);
-                $ssr_str .= '&protoparam=' . ($node['single'] ? base64url_encode($user->port . ':' . $user->passwd) : base64url_encode($protocol_param));
-                $ssr_str .= '&remarks=' . base64url_encode($node['name']);
-                $ssr_str .= '&group=' . base64url_encode(empty($group) ? Helpers::systemConfig()['website_name'] : $group->name);
-                $ssr_str .= '&udpport=0';
-                $ssr_str .= '&uot=0';
-                $ssr_str = base64url_encode($ssr_str);
-                $scheme .= 'ssr://' . $ssr_str . "\n";
-            } else {
-                // 生成v2ray scheme
-                $v2_json = [
-                    "v"    => "2",
-                    "ps"   => $node['name'],
-                    "add"  => $node['server'] ? $node['server'] : $node['ip'],
-                    "port" => $node['v2_port'],
-                    "id"   => $user->vmess_id,
-                    "aid"  => $node['v2_alter_id'],
-                    "net"  => $node['v2_net'],
-                    "type" => $node['v2_type'],
-                    "host" => $node['v2_host'],
-                    "path" => $node['v2_path'],
-                    "tls"  => $node['v2_tls'] ? "tls" : ""
-                ];
-
-                $scheme .= 'vmess://' . base64url_encode(json_encode($v2_json, JSON_PRETTY_PRINT)) . "\n";
-            }
+            
+            // 生成v2ray scheme
+            $v2_json = [
+                "v"    => "2",
+                "ps"   => $node['name'],
+                "add"  => $node['server'] ? $node['server'] : $node['ip'],
+                "port" => $node['v2_port'],
+                "id"   => $user->vmess_id,
+                "aid"  => $node['v2_alter_id'],
+                "net"  => $node['v2_net'],
+                "type" => $node['v2_type'],
+                "host" => $node['v2_host'],
+                "path" => $node['v2_path'],
+                "tls"  => $node['v2_tls'] ? "tls" : "",
+                "allowInsecure" => true
+            ];
+            $scheme .= 'vmess://' . base64url_encode(json_encode($v2_json, JSON_PRETTY_PRINT)) . "\n";
         }
 
         // 适配Quantumult的自定义订阅头

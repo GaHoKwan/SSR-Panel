@@ -8,12 +8,12 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class sendUserInfo extends Mailable implements ShouldQueue
+class paymentSuccess extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     protected $id; // 邮件记录ID
-    protected $content; // 账号信息
+    protected $content; // 信息
 
     public function __construct($id, $content)
     {
@@ -23,7 +23,7 @@ class sendUserInfo extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->view('emails.sendUserInfo')->subject('发送账号信息')->with([
+        return $this->view('emails.paymentSuccess')->subject('订单支付成功')->with([
             'content' => $this->content
         ]);
     }
