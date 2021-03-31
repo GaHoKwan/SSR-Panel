@@ -343,7 +343,7 @@ class SubscribeController extends Controller
      */
     private function lastTraffic($user)
     {
-        $text = '【' . Helpers::systemConfig()['website_name'] . '】' . '剩余流量：' . flowAutoShow($user->transfer_enable - $user->u - $user->d);
+        $text = '【剩余流量】：' . flowAutoShow($user->transfer_enable - $user->u - $user->d);
         // 生成v2ray scheme
         $v2_json = [
             "v"    => "2",
@@ -370,7 +370,7 @@ class SubscribeController extends Controller
      */
     private function expireDate($user)
     {
-        $text = '【' . Helpers::systemConfig()['website_name'] . '】' . '到期时间：' . $user->expire_time;
+        $text = '【过期时间】：' . $user->expire_time;
         // 生成v2ray scheme
         $v2_json = [
             "v"    => "2",
