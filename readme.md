@@ -1,5 +1,6 @@
 # VNet Panel
 Support but not limited to: V2Ray
+该项目为ssrpanel备份，已过时，仅留备份用途
 
 ## Requirements
 - PHP 7.1.3 +
